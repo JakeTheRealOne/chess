@@ -12,3 +12,12 @@
 
 # pragma once
 
+
+/**
+ * @brief The Game class represents a game of chess
+ * 
+ */
+class Game
+{
+
+};

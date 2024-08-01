@@ -10,3 +10,5 @@ COMPILE := $(CC) $(FLAGS)
 OBJ_DIR := object
 SRC_DIR := source
 HEAD_DIR := header
+
+all:
