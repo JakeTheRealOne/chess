@@ -16,11 +16,13 @@
 // #### Std inclusions: ####
 # include <stdexcept>
 # include <iostream>
+# include <vector>
 using namespace std;
 
 
 Piece::Piece(const bool player, const int x, const int y, Game* game):
-_player(player), _x(x), _y(y), _game(game) {}
+_player(player), _x(x), _y(y), _game(game)
+{}
 
 
 bool Piece::player() const noexcept
@@ -40,6 +42,11 @@ int Piece::y() const noexcept
   return this->_y;
 }
 
+
+char Piece::repr() const noexcept
+{
+  return this->_repr;
+}
 
 Game* Piece::game() const noexcept
 {
@@ -83,10 +90,24 @@ bool Piece::isPawn() const noexcept
 }
 
 
+bool Piece::isPinned() const noexcept
+{
+  // check if diag or col or row of the piece is the same as their king and check if Q B R on it too
+  
+}
+
 void Piece::move(const int x, const int y)
 {
   throw runtime_error(
     "Piece::move should only be called on a non-empty piece (inheritance)"
+  );
+}
+
+
+vector<vector<int>> Piece::read() const
+{
+  throw runtime_error(
+    "Piece::read should only be called on a non-empty piece (inheritance)"
   );
 }
 

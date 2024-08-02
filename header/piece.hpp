@@ -13,12 +13,13 @@
 # pragma once
 
 
-// #### Internal inclusions: ####
-# include "../header/game.hpp"
-
 // #### Std inclusions: ####
 # include <iostream>
+# include <vector>
 using namespace std;
+
+
+class Game; //< Cannot use game.hpp because of circular import
 
 
 /**
@@ -52,7 +53,7 @@ public:
    * @brief Destroy the Knight object
    * 
    */
-  ~Piece() noexcept = default;
+  virtual ~Piece() noexcept = default;
 
   // #### Getters: ####
 
@@ -76,6 +77,13 @@ public:
    * @return int Column index
    */
   int y() const noexcept;
+
+  /**
+   * @brief To get the representation of the chess piece
+   * 
+   * @return char 
+   */
+  char repr() const noexcept;
 
   /**
    * @brief To get a pointer to the game where the chess piece
@@ -135,6 +143,14 @@ public:
    */
   virtual bool isPawn() const noexcept;
 
+  /**
+   * @brief To get the Pinned flag
+   * 
+   * @return true If the chess piece is blocking a check (pinned to the king)
+   * @return false Else
+   */
+  virtual bool isPinned() const noexcept;
+
   // #### Setters: ####
 
   /**
@@ -146,6 +162,17 @@ public:
    * @param y The new Y pos to assign to the chess piece
    */
   virtual void move(const int x, const int y);
+
+  // #### Methods: ####
+
+  /**
+   * @brief To get the list of legal moves for the piece
+   *
+   * @throw std::runtime_error Because this method cannot be used on an empty piece
+   * 
+   * @return vector<vector<int, int>> The list of pos that the chess piece can hop on
+   */
+  virtual vector<vector<int>> read() const;
 
   // #### Operators: ####
 
@@ -171,5 +198,6 @@ protected:
   // #### Attributes: ####
   bool _player = 0;  //< Owner of the chess piece.
   int _x = 0, _y = 0;  //< Position of the piece on the 8*8 board.
+  char _repr = '?';
   Game* _game = nullptr;
 };

@@ -5,10 +5,16 @@
 CC := g++
 FLAGS := -std=c++17 -Wall -Wextra -Wpedantic -D_GNU_SOURCE -Werror=all -O2
 ICU_FLAGS := -licuuc -licudata -licui18n
-COMPILE := $(CC) $(FLAGS)
+COMPILE := $(CC) # $(FLAGS)
 
 OBJ_DIR := object
 SRC_DIR := source
 HEAD_DIR := header
 
 all:
+	$(COMPILE) -c source/piece.cpp -o object/piece.o
+	$(COMPILE) -c source/knight.cpp -o object/knight.o
+	$(COMPILE) -c source/pawn.cpp -o object/pawn.o
+	$(COMPILE) -c source/king.cpp -o object/king.o
+	$(COMPILE) -c source/game.cpp -o object/game.o
+	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/king.o object/game.o source/main.cpp -o output

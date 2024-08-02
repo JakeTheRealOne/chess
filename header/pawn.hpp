@@ -1,9 +1,9 @@
 /**
- * @file knight.hpp
+ * @file pawn.hpp
  * @author JakeTheRealOne (jakelevrai@outlook.be)
- * @brief Header file for the Knight class
+ * @brief Header file for the Pawn class
  * @version 0.1
- * @date 01-08-2024
+ * @date 02-08-2024
  * 
  * @copyright Copyright (c) 2024
  * 
@@ -23,38 +23,46 @@ using namespace std;
 
 
 /**
- * @brief The Knight class represents a knight piece in a chess game
+ * @brief The Pawn class represents a pawn piece in a chess game
  * 
  */
-class Knight : public Piece
+class Pawn : public Piece
 {
 public:
   // #### Constructors: ####
 
   /**
-   * @brief Construct a new Knight object
+   * @brief Construct a new Pawn object
    * 
    */
-  Knight();
+  Pawn();
 
   /**
-   * @brief Construct a new Knight object
+   * @brief Construct a new Pawn object
    * 
    * @param player The player that owns the chess piece
    * @param x The X pos of the chess piece
    * @param y The Y pos of the chess piece
    * @param game The game where the chess piece is located
    */
-  Knight(const bool player, const int x, const int y, Game* game);
+  Pawn(const bool player, const int x, const int y, Game* game);
 
   // #### Flags: ####
 
   /**
-   * @brief To get the Knight flag
+   * @brief To get the Pawn flag
    * 
    * @return true
    */
-  bool isKnight() const noexcept override;
+  bool isPawn() const noexcept override;
+
+  /**
+   * @brief To get the didntMove flag
+   * 
+   * @return true If the pawn is still on his 
+   * @return false 
+   */
+  bool didntMove() const noexcept;
 
   // #### Setters: ####
 
@@ -69,9 +77,9 @@ public:
   // #### Methods: ####
 
   /**
-   * @brief To get the list of legal moves for the knight
+   * @brief To get the list of legal moves for the pawn
    * 
-   * @return vector<vector<int, int>> The list of pos that the knight can hop on
+   * @return vector<vector<int, int>> The list of pos that the pawn can hop on
    */
   vector<vector<int>> read() const noexcept override;
 
@@ -80,13 +88,16 @@ public:
   /**
    * @brief The extraction operator
    * 
-   * @param stream The stream to modify with the Knight object
-   * @param me The Knight object
+   * @param stream The stream to modify with the Pawn object
+   * @param me The Pawn object
    * @return ostream& The modified stream
    */
-  friend ostream& operator<<(ostream& stream, const Knight& me);
+  friend ostream& operator<<(ostream& stream, const Pawn& me);
 
 private:
+  // #### Attributes: ####
+  bool _didntMove = true;
+
   // #### Auxilary methods: ####
 
   /**
