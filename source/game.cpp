@@ -13,7 +13,10 @@
 // #### Internal inclusions: ####
 # include "../header/piece.hpp"
 # include "../header/knight.hpp"
+# include "../header/queen.hpp"
 # include "../header/pawn.hpp"
+# include "../header/bishop.hpp"
+# include "../header/rook.hpp"
 # include "../header/king.hpp"
 # include "../header/game.hpp"
 
@@ -36,12 +39,32 @@ Game::Game()
     _board[1][x] = new Pawn(1, x, 1, this);
     _board[6][x] = new Pawn(0, x, 6, this);
   }
-  whiteKing = new King(0, 4, 7, this);
-  blackKing = new King(1, 4, 0, this);
-  _board[7][4] = whiteKing;
-  _board[0][4] = blackKing;
 
-  // _board[2][3] = new Knight(0, 3, 2, this);
+  _board[0][1] = new Knight(1, 1, 0, this);
+  _board[0][6] = new Knight(1, 6, 0, this);
+  _board[7][1] = new Knight(0, 1, 7, this);
+  _board[7][6] = new Knight(0, 6, 7, this);
+
+  _board[0][0] = new Rook(1, 0, 0, this);
+  _board[0][7] = new Rook(1, 7, 0, this);
+  _board[7][0] = new Rook(0, 0, 7, this);
+  _board[7][7] = new Rook(0, 7, 7, this);
+
+  _board[0][2] = new Bishop(1, 2, 0, this);
+  _board[0][5] = new Bishop(1, 5, 0, this);
+  _board[7][2] = new Bishop(0, 2, 7, this);
+  _board[7][5] = new Bishop(0, 5, 7, this);
+
+  _board[0][3] = new Queen(1, 3, 0, this);
+  _board[7][3] = new Queen(0, 3, 7, this);
+
+  _whiteKing = new King(0, 4, 7, this);
+  _blackKing = new King(1, 4, 0, this);
+  _board[7][4] = _whiteKing;
+  _board[0][4] = _blackKing;
+
+  // debug:
+  _board[4][3] = new Rook(0, 3, 4, this);
 }
 
 
@@ -101,6 +124,12 @@ void Game::display() const noexcept
     }
     cout << endl;
   }
+}
+
+
+Piece* Game::king(const bool player) const noexcept
+{
+  return player ? _blackKing : _whiteKing;
 }
 
 

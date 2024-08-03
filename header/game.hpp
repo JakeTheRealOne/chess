@@ -81,6 +81,14 @@ public:
    */
   vector<Piece*> checkList() const noexcept;
 
+  /**
+   * @brief To get the king of a player
+   * 
+   * @param player The owner of the king (0: White, 1: Black)
+   * @return Piece* Pointer to the king
+   */
+  Piece* king(const  bool player) const noexcept;
+
   // #### Methods: ####
 
   /**
@@ -114,6 +122,6 @@ private:
   vector<vector<bool>> _drawingBox; //< To display moves, check etc.
   vector<Piece*> _checkList; //< The list of piece checking current player
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)
-  King* whiteKing;
-  King* blackKing;
+  King* _whiteKing;
+  King* _blackKing;
 };

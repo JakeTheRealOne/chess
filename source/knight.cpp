@@ -87,48 +87,4 @@ ostream& operator<<(ostream& stream, const Knight& me)
 
 void Knight::filterMoves(vector<vector<int>>& moves) const noexcept
 {
-  /*
-  LEGAL MOVES:
-  - Do not create a check
-  - Block a current check
-  - Do not eat a friend piece
-  */
-  vector<Piece*> currentChecks = _game->checkList();
-  if (currentChecks.size() > 1 or isPinned())
-  {
-    moves.clear(); //< There is nothing a knight can do
-  }
-  /// If check is N or P, the knight has to eat it
-  /// If check is Q, B, R, the knight has to stand between (or eat but ==)
-  /// If no check, the knight is free to go anywhere if
-    //- Not eating firend piece
-    //- Not pinned
-  else if (currentChecks.size())
-  {
-    Piece* piece = currentChecks[0];
-    if (piece->isKnight() or piece->isPawn())
-    {
-      /// Find a move that is eating the ennemy
-      for (auto iter = moves.begin(); iter != moves.end(); ++ iter)
-      {
-        if (_game->at((*iter)[0], (*iter)[1]) == piece)
-        {
-          cout << "Can be eaten" << endl;
-          // !!! Check if pinned here
-          moves[0] = *iter;
-          moves.erase(moves.begin() + 1, moves.end());
-          return;
-        }
-      }
-      moves.clear();
-    }
-    else
-    {
-      // piece is Q, B, R
-    }
-  }
-  else
-  {
-
-  }
 }

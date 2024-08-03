@@ -200,4 +200,25 @@ protected:
   int _x = 0, _y = 0;  //< Position of the piece on the 8*8 board.
   char _repr = '?';
   Game* _game = nullptr;
+
+private:
+  // #### Auxiliary methods: ####
+
+  /**
+   * @brief (used in Piece::isPinned) To check if the piece is pinned on its column
+   * 
+   * @param king The king of the piece
+   * @return true If pinned on the column
+   * @return false Else
+   */
+  bool checkCol(Piece* king) const noexcept;
+
+  /**
+   * @brief (used in Piece::isPinned) To check if the piece is pinned on its row
+   * 
+   * @param king The king of the piece
+   * @return true If pinned on the row
+   * @return false Else
+   */
+  bool checkRow(Piece* king) const noexcept;
 };
