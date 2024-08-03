@@ -73,7 +73,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the bishop can hop on
    */
-  vector<vector<int>> read() const noexcept override;
+  vector<vector<int>> read() noexcept override;
 
   // #### Operator: ####
 
@@ -90,8 +90,12 @@ private:
   // #### Auxilary methods: ####
 
   /**
-   * @brief Filter the moves given to keep only the legal ones
+   * @brief To check if the case (x, y) is a valid target for the bishop
    * 
+   * @param x The x pos of the target
+   * @param y The y pos of the target
+   * @return true If the bishop can continue
+   * @return false If the bishop hits a bound (end of grid, other piece, etc.)
    */
-  void filterMoves(vector<vector<int>>& moves) const noexcept;
+  bool checkTarget(const int x, const int y) noexcept;
 };

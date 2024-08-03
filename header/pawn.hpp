@@ -81,7 +81,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the pawn can hop on
    */
-  vector<vector<int>> read() const noexcept override;
+  vector<vector<int>> read() noexcept override;
 
   // #### Operator: ####
 
@@ -97,12 +97,4 @@ public:
 private:
   // #### Attributes: ####
   bool _didntMove = true;
-
-  // #### Auxilary methods: ####
-
-  /**
-   * @brief Filter the moves given to keep only the legal ones
-   * 
-   */
-  void filterMoves(vector<vector<int>>& moves) const noexcept;
 };

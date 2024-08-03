@@ -89,6 +89,13 @@ public:
    */
   Piece* king(const  bool player) const noexcept;
 
+  /**
+   * @brief To get the index of the game (the current progress)
+   * 
+   * @return int 
+   */
+  int index() const noexcept;
+
   // #### Methods: ####
 
   /**
@@ -124,4 +131,5 @@ private:
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)
   King* _whiteKing;
   King* _blackKing;
+  int _index = 0; //< The index of the current move in the game (from 0 to inf.)
 };

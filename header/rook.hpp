@@ -73,7 +73,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the rook can hop on
    */
-  vector<vector<int>> read() const noexcept override;
+  vector<vector<int>> read() noexcept override;
 
   // #### Operator: ####
 
@@ -90,19 +90,12 @@ private:
   // #### Auxilary methods: ####
 
   /**
-   * @brief Filter the moves given to keep only the legal ones
-   * 
-   */
-  void filterMoves(vector<vector<int>>& moves) const noexcept;
-
-  /**
    * @brief To check if the case (x, y) is a valid target for the rook
    * 
-   * @param moves The current list of moves to modify with the target if valid
    * @param x The x pos of the target
    * @param y The y pos of the target
    * @return true If the rook can continue
    * @return false If the rook hits a bound (end of grid, other piece, etc.)
    */
-  bool checkTarget(vector<vector<int>>& moves, const int x, const int y) const noexcept;
+  bool checkTarget(const int x, const int y) noexcept;
 };

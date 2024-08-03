@@ -172,7 +172,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the chess piece can hop on
    */
-  virtual vector<vector<int>> read() const;
+  virtual vector<vector<int>> read();
 
   // #### Operators: ####
 
@@ -198,6 +198,8 @@ protected:
   // #### Attributes: ####
   bool _player = 0;  //< Owner of the chess piece.
   int _x = 0, _y = 0;  //< Position of the piece on the 8*8 board.
+  int _savedIndex = -1; //> Used to identify the saved moves.
+  vector<vector<int>> _savedMoves; //> Used to prevent redondant computing.
   char _repr = '?';
   Game* _game = nullptr;
 

@@ -50,7 +50,7 @@ void Knight::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Knight::read() const noexcept
+vector<vector<int>> Knight::read() noexcept
 {
   /*
     X X
@@ -59,9 +59,15 @@ vector<vector<int>> Knight::read() const noexcept
    X   X
     X X
   */
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
   int size = _game->SIZE, offsetX, offsetY;
-  vector<vector<int>> moves;
-  moves.reserve(KNIGHT_MOVES.size());
+  _savedMoves.reserve(KNIGHT_MOVES.size());
   for (const vector<int>& move : KNIGHT_MOVES)
   {
     offsetX = _x + move[0];
@@ -69,11 +75,10 @@ vector<vector<int>> Knight::read() const noexcept
     Piece* target = _game->at(offsetX, offsetY);
     if (0 <= offsetX and 0 <= offsetY and offsetX < size and offsetY < size and  (target == nullptr or target->player() != this->player()))
     {
-      moves.push_back({offsetX, offsetY});
+      _savedMoves.push_back({offsetX, offsetY});
     }
   }
-  //this->filterMoves(moves);
-  return moves;
+  return _savedMoves;
 }
 
 
@@ -82,9 +87,4 @@ ostream& operator<<(ostream& stream, const Knight& me)
   stream << "Knight(" << (me._player ? "black" : "white")
          << ", " << me._x << ", " << me._y << ")";
   return stream;
-}
-
-
-void Knight::filterMoves(vector<vector<int>>& moves) const noexcept
-{
 }

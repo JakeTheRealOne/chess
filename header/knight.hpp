@@ -73,7 +73,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the knight can hop on
    */
-  vector<vector<int>> read() const noexcept override;
+  vector<vector<int>> read() noexcept override;
 
   // #### Operator: ####
 
@@ -85,13 +85,4 @@ public:
    * @return ostream& The modified stream
    */
   friend ostream& operator<<(ostream& stream, const Knight& me);
-
-private:
-  // #### Auxilary methods: ####
-
-  /**
-   * @brief Filter the moves given to keep only the legal ones
-   * 
-   */
-  void filterMoves(vector<vector<int>>& moves) const noexcept;
 };

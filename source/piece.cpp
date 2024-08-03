@@ -155,7 +155,7 @@ void Piece::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Piece::read() const
+vector<vector<int>> Piece::read()
 {
   throw runtime_error(
     "Piece::read should only be called on a non-empty piece (inheritance)"

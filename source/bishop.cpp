@@ -47,7 +47,7 @@ void Bishop::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Bishop::read() const noexcept
+vector<vector<int>> Bishop::read() noexcept
 {
   /*
     X   X
@@ -56,10 +56,31 @@ vector<vector<int>> Bishop::read() const noexcept
      X X
     X   X
   */
-  int size = _game->SIZE, offsetX, offsetY;
-  vector<vector<int>> moves;
-  //this->filterMoves(moves);
-  return moves;
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
+  int size = _game->SIZE, offsetX, offsetY, i, j, increI, increJ;
+  for (int a = 0; a < 4; ++ a)
+  {
+    increI = a >> 1 ? 1 : -1;
+    increJ = a & 1 ? 1 : -1;
+    i = _x + increI;
+    j = _y + increJ;
+    while (i >= 0 and i < size and j >= 0 and j < size)
+    {
+      if (not checkTarget(i, j))
+      {
+        break;
+      }
+      i += increI;
+      j += increJ;
+    }
+  }
+  return _savedMoves;
 }
 
 
@@ -71,6 +92,17 @@ ostream& operator<<(ostream& stream, const Bishop& me)
 }
 
 
-void Bishop::filterMoves(vector<vector<int>>& moves) const noexcept
+bool Bishop::checkTarget(const int x, const int y) noexcept
 {
+    Piece* target = _game->at(x, y);
+    if (target == nullptr)
+    {
+      _savedMoves.push_back({x, y});
+      return true;
+    }
+    else if (target->player() != _player)
+    {
+      _savedMoves.push_back({x, y});
+    }
+    return false;
 }

@@ -47,7 +47,7 @@ void Queen::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Queen::read() const noexcept
+vector<vector<int>> Queen::read() noexcept
 {
   /*
     X X X
@@ -56,10 +56,50 @@ vector<vector<int>> Queen::read() const noexcept
      XXX
     x x x
   */
-  int size = _game->SIZE, offsetX, offsetY;
-  vector<vector<int>> moves;
-  //this->filterMoves(moves);
-  return moves;
+  int size = _game->SIZE, offsetX, offsetY, i, j, increI, increJ;
+  // Bishop behavior:
+  for (int a = 0; a < 4; ++ a)
+  {
+    increI = a >> 1 ? 1 : -1;
+    increJ = a & 1 ? 1 : -1;
+    i = _x + increI;
+    j = _y + increJ;
+    while (i >= 0 and i < size and j >= 0 and j < size)
+    {
+      if (not checkTarget(i, j))
+      {
+        break;
+      }
+      i += increI;
+      j += increJ;
+    }
+  }
+  // Rook behavior:
+  for (int i = _x + 1; i < size; ++ i)
+  {
+    if (not checkTarget(i, _y)){
+      break;
+    }
+  }
+  for (int i = _x - 1; i >= 0; -- i)
+  {
+    if (not checkTarget(i, _y)){
+      break;
+    }
+  }
+  for (int i = _y + 1; i < size; ++ i)
+  {
+    if (not checkTarget(_x, i)){
+      break;
+    }
+  }
+  for (int i = _y - 1; i >= 0; -- i)
+  {
+    if (not checkTarget(_x, i)){
+      break;
+    }
+  }
+  return _savedMoves;
 }
 
 
@@ -71,6 +111,17 @@ ostream& operator<<(ostream& stream, const Queen& me)
 }
 
 
-void Queen::filterMoves(vector<vector<int>>& moves) const noexcept
+bool Queen::checkTarget(const int x, const int y) noexcept
 {
+    Piece* target = _game->at(x, y);
+    if (target == nullptr)
+    {
+      _savedMoves.push_back({x, y});
+      return true;
+    }
+    else if (target->player() != _player)
+    {
+      _savedMoves.push_back({x, y});
+    }
+    return false;
 }

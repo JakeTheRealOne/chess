@@ -73,7 +73,7 @@ public:
    * 
    * @return vector<vector<int, int>> The list of pos that the queen can hop on
    */
-  vector<vector<int>> read() const noexcept override;
+  vector<vector<int>> read() noexcept override;
 
   // #### Operator: ####
 
@@ -90,8 +90,12 @@ private:
   // #### Auxilary methods: ####
 
   /**
-   * @brief Filter the moves given to keep only the legal ones
+   * @brief To check if the case (x, y) is a valid target for the queen
    * 
+   * @param x The x pos of the target
+   * @param y The y pos of the target
+   * @return true If the queen can continue
+   * @return false If the queen hits a bound (end of grid, other piece, etc.)
    */
-  void filterMoves(vector<vector<int>>& moves) const noexcept;
+  bool checkTarget(const int x, const int y) noexcept;
 };

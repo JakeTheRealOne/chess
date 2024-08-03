@@ -52,7 +52,7 @@ void Pawn::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Pawn::read() const noexcept
+vector<vector<int>> Pawn::read() noexcept
 {
   /*
      X 
@@ -60,32 +60,36 @@ vector<vector<int>> Pawn::read() const noexcept
      P
     (take and en passant conditions for diag. + first move)
   */
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
+
   int size = _game->SIZE;
-  vector<vector<int>> moves;
   int offsetY = _y + (_player ? 1 : -1);
   auto tmp = _game->at(_x, offsetY);
   if (offsetY >= 0 and offsetY < size and _game->at(_x, offsetY) == nullptr)
   {
-    moves.push_back({_x, offsetY});
-    cout << offsetY << endl;
+    _savedMoves.push_back({_x, offsetY});
     _player ? ++ offsetY : -- offsetY;
-    cout << offsetY << endl;
     if (_didntMove and offsetY >= 0 and offsetY < size and _game->at(_x, offsetY) == nullptr)
     {
-      moves.push_back({_x, offsetY});   
+      _savedMoves.push_back({_x, offsetY});   
     }
   }
   offsetY = _y + (_player ? 1 : -1);
   if (_game->at(_x + 1, offsetY) != nullptr)
   {
-    moves.push_back({_x + 1, offsetY});   
+    _savedMoves.push_back({_x + 1, offsetY});   
   }
   if (_game->at(_x - 1, offsetY) != nullptr)
   {
-    moves.push_back({_x - 1, offsetY});   
+    _savedMoves.push_back({_x - 1, offsetY});   
   }
-  //this->filterMoves(moves);
-  return moves;
+  return _savedMoves;
 }
 
 
@@ -94,10 +98,4 @@ ostream& operator<<(ostream& stream, const Pawn& me)
   stream << "Pawn(" << (me._player ? "black" : "white")
          << ", " << me._x << ", " << me._y << ")";
   return stream;
-}
-
-
-void Pawn::filterMoves(vector<vector<int>>& moves) const noexcept
-{
-
 }

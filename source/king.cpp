@@ -47,16 +47,22 @@ void King::move(const int x, const int y)
 }
 
 
-vector<vector<int>> King::read() const noexcept
+vector<vector<int>> King::read() noexcept
 {
   /*
    XXX
    XKX
    XXX
   */
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
   int size = _game->SIZE, offsetX, offsetY;
-  vector<vector<int>> moves;
-  moves.reserve(8);
+  _savedMoves.reserve(8);
   for (int i = -1; i < 2; ++ i)
   {
     for (int j = -1; j < 2; ++ j)
@@ -66,12 +72,11 @@ vector<vector<int>> King::read() const noexcept
       Piece* target = _game->at(offsetX, offsetY);
       if (offsetX >= 0 and offsetY >= 0 and offsetX < size and offsetY < size and (target == nullptr or target->player() != this->player()))
       {
-        moves.push_back({offsetX, offsetY});
+        _savedMoves.push_back({offsetX, offsetY});
       }
     }
   }
-  this->filterMoves(moves);
-  return moves;
+  return _savedMoves;
 }
 
 
@@ -80,14 +85,4 @@ ostream& operator<<(ostream& stream, const King& me)
   stream << "King(" << (me._player ? "black" : "white")
          << ", " << me._x << ", " << me._y << ")";
   return stream;
-}
-
-
-void King::filterMoves(vector<vector<int>>& moves) const noexcept
-{
-  /*
-  LEGAL MOVES:
-  - Do put itself in check
-  */
-  
 }

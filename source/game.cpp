@@ -64,7 +64,7 @@ Game::Game()
   _board[0][4] = _blackKing;
 
   // debug:
-  _board[4][3] = new Rook(0, 3, 4, this);
+  _board[4][3] = new Queen(0, 3, 4, this);
 }
 
 
@@ -130,6 +130,12 @@ void Game::display() const noexcept
 Piece* Game::king(const bool player) const noexcept
 {
   return player ? _blackKing : _whiteKing;
+}
+
+
+int Game::index() const noexcept
+{
+  return this->_index;
 }
 
 

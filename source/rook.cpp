@@ -47,7 +47,7 @@ void Rook::move(const int x, const int y)
 }
 
 
-vector<vector<int>> Rook::read() const noexcept
+vector<vector<int>> Rook::read() noexcept
 {
   /*
       X
@@ -56,34 +56,39 @@ vector<vector<int>> Rook::read() const noexcept
       X
       X
   */
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
   int size = _game->SIZE, offsetX, offsetY;
-  vector<vector<int>> moves;
   for (int i = _x + 1; i < size; ++ i)
   {
-    if (not tmp(moves, i, _y)){
+    if (not checkTarget(i, _y)){
       break;
     }
   }
   for (int i = _x - 1; i >= 0; -- i)
   {
-    if (not tmp(moves, i, _y)){
+    if (not checkTarget(i, _y)){
       break;
     }
   }
   for (int i = _y + 1; i < size; ++ i)
   {
-    if (not tmp(moves, _x, i)){
+    if (not checkTarget(_x, i)){
       break;
     }
   }
   for (int i = _y - 1; i >= 0; -- i)
   {
-    if (not tmp(moves, _x, i)){
+    if (not checkTarget(_x, i)){
       break;
     }
   }
-  //this->filterMoves(moves);
-  return moves;
+  return _savedMoves;
 }
 
 
@@ -95,22 +100,17 @@ ostream& operator<<(ostream& stream, const Rook& me)
 }
 
 
-void Rook::filterMoves(vector<vector<int>>& moves) const noexcept
-{
-}
-
-
-bool Rook::checkTarget(vector<vector<int>>& moves, const int x, const int y) const noexcept
+bool Rook::checkTarget(const int x, const int y) noexcept
 {
     Piece* target = _game->at(x, y);
     if (target == nullptr)
     {
-      moves.push_back({x, y});
+      _savedMoves.push_back({x, y});
       return true;
     }
     else if (target->player() != _player)
     {
-      moves.push_back({x, y});
+      _savedMoves.push_back({x, y});
     }
     return false;
 }
