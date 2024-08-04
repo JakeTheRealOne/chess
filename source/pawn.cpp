@@ -46,9 +46,20 @@ bool Pawn::didntMove() const noexcept
   return _didntMove;
 }
 
-void Pawn::move(const int x, const int y)
+int Pawn::doubleUpIndex() const noexcept
 {
+  return _doubleUp;
+}
+
+void Pawn::move(const int x, const int y) noexcept
+{
+  if (abs(_y - y) == 2)
+  {
+    _doubleUp = _game->index(); //< Register double up index for En passant
+  }
   _didntMove = false;
+  _x = x;
+  _y = y;
 }
 
 
@@ -85,9 +96,25 @@ vector<vector<int>> Pawn::read() noexcept
   {
     _savedMoves.push_back({_x + 1, offsetY});   
   }
+  else if (((_player and _y == 4) or (not _player and _y == 3)) and _game->at(_x + 1, _y) != nullptr and _game->at(_x + 1, _y)->isPawn())
+  { // Possible en passant;
+    Pawn* pawn = (Pawn*)_game->at(_x + 1, _y);
+    if (pawn->player() != _player and pawn->doubleUpIndex() == _game->index() - 1)
+    {
+      _savedMoves.push_back({_x + 1, offsetY});
+    }
+  }
   if (_game->at(_x - 1, offsetY) != nullptr)
   {
     _savedMoves.push_back({_x - 1, offsetY});   
+  }
+  else if (((_player and _y == 4) or (not _player and _y == 3)) and _game->at(_x - 1, _y) != nullptr and _game->at(_x - 1, _y)->isPawn())
+  { // Possible en passant;
+    Pawn* pawn = (Pawn*)_game->at(_x - 1, _y);
+    if (pawn->player() != _player and pawn->doubleUpIndex() == _game->index() - 1)
+    {
+    _savedMoves.push_back({_x - 1, offsetY});
+    }
   }
   return _savedMoves;
 }

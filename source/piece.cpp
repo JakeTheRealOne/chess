@@ -147,11 +147,10 @@ bool Piece::checkRow(Piece* king) const noexcept
 }
 
 
-void Piece::move(const int x, const int y)
+void Piece::move(const int x, const int y) noexcept
 {
-  throw runtime_error(
-    "Piece::move should only be called on a non-empty piece (inheritance)"
-  );
+  _x = x;
+  _y = y;
 }
 
 

@@ -64,6 +64,15 @@ public:
    */
   bool didntMove() const noexcept;
 
+  // #### Getters: ####
+
+  /**
+   * @brief To get the index of the 'double up' move
+   * 
+   * @return int 
+   */
+  int doubleUpIndex() const noexcept;
+
   // #### Setters: ####
 
   /**
@@ -72,7 +81,7 @@ public:
    * @param x The new X pos to assign to the chess piece
    * @param y The new Y pos to assign to the chess piece
    */
-  void move(const int x, const int y) override;
+  void move(const int x, const int y) noexcept override;
 
   // #### Methods: ####
 
@@ -97,4 +106,5 @@ public:
 private:
   // #### Attributes: ####
   bool _didntMove = true;
+  int _doubleUp = -1;
 };

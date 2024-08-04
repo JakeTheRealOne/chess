@@ -41,12 +41,6 @@ bool King::isKing() const noexcept
 }
 
 
-void King::move(const int x, const int y)
-{
-
-}
-
-
 vector<vector<int>> King::read() noexcept
 {
   /*

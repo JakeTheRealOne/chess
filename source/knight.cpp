@@ -44,12 +44,6 @@ bool Knight::isKnight() const noexcept
 }
 
 
-void Knight::move(const int x, const int y)
-{
-
-}
-
-
 vector<vector<int>> Knight::read() noexcept
 {
   /*

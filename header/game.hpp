@@ -112,6 +112,23 @@ public:
    */
   void showMoves(const int x, const int y) noexcept;
 
+  /**
+   * @brief Move the piece to a new position
+   * 
+   * @param piece The involved piece
+   * @param x The x of target position
+   * @param y The y of target position
+   */
+  void move(Piece* piece, const int x, const int y) noexcept;
+
+  /**
+   * @brief Filter the vector moves to only keeps the legal ones
+   * 
+   * @param piece The piece that owns the moves
+   * @param moves The vector of pos {x, y} for each moves
+   */
+  void filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept;
+
   // #### Operators: ####
 
   /**
@@ -123,6 +140,13 @@ public:
    */
   bool operator==(const Game& other) const;
 
+  /**
+   * @brief The increment operator
+   * 
+   * @return Game& This game
+   */
+  Game& operator++();
+
 private:
   // #### Attributes: ####
   vector<vector<Piece*>> _board;
@@ -132,4 +156,14 @@ private:
   King* _whiteKing;
   King* _blackKing;
   int _index = 0; //< The index of the current move in the game (from 0 to inf.)
+
+  // #### Auxiliary methods: ####
+
+  /**
+   * @brief To remove all moves that are illegal from moves of a piece
+   * 
+   * @param moves The list of moves given
+   * @param piece The piece that want to move
+   */
+  void filterMoves(vector<vector<int>>& moves, Piece* piece);
 };

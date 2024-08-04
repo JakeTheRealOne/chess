@@ -56,16 +56,6 @@ public:
    */
   bool isKnight() const noexcept override;
 
-  // #### Setters: ####
-
-  /**
-   * @brief Check if the move is legal and execute it
-   *
-   * @param x The new X pos to assign to the chess piece
-   * @param y The new Y pos to assign to the chess piece
-   */
-  void move(const int x, const int y) override;
-
   // #### Methods: ####
 
   /**

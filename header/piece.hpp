@@ -156,12 +156,10 @@ public:
   /**
    * @brief Check if the move is legal and execute it
    *
-   * @throw std::runtime_error Because this method cannot be used on an empty piece
-   *
    * @param x The new X pos to assign to the chess piece
    * @param y The new Y pos to assign to the chess piece
    */
-  virtual void move(const int x, const int y);
+  virtual void move(const int x, const int y) noexcept;
 
   // #### Methods: ####
 

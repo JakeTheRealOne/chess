@@ -41,12 +41,6 @@ bool Queen::isQueen() const noexcept
 }
 
 
-void Queen::move(const int x, const int y)
-{
-
-}
-
-
 vector<vector<int>> Queen::read() noexcept
 {
   /*

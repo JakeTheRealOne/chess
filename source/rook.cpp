@@ -41,12 +41,6 @@ bool Rook::isRook() const noexcept
 }
 
 
-void Rook::move(const int x, const int y)
-{
-
-}
-
-
 vector<vector<int>> Rook::read() noexcept
 {
   /*

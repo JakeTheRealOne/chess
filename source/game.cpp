@@ -23,6 +23,7 @@
 // #### Std inclusions: ####
 # include <vector>
 # include <iostream>
+# include <algorithm>
 using namespace std;
 
 
@@ -64,7 +65,7 @@ Game::Game()
   _board[0][4] = _blackKing;
 
   // debug:
-  _board[4][3] = new Queen(0, 3, 4, this);
+  _board[4][3] = new Pawn(1, 3, 4, this);
 }
 
 
@@ -167,7 +168,39 @@ void Game::showMoves(const int x, const int y) noexcept
 }
 
 
+void Game::move(Piece* piece, const int x, const int y) noexcept
+{
+  vector<int> pos = {x, y};
+  vector<vector<int>> available = piece->read();
+  if (find(available.begin(), available.end(), pos) == available.end())
+  {
+    cout << "[WRN] cannot play illegal move: " << x << " " << y << endl;
+    return;
+  }
+  if (_board[y][x] != nullptr)
+  {
+    delete _board[y][x];
+  }
+  _board[y][x] = piece;
+  _board[piece->y()][piece->x()] = nullptr;
+  piece->move(x, y);
+}
+
+
+void filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
+{
+  
+}
+
 bool Game::operator==(const Game& other) const
 {
   return (other._turn == this->_turn and other._board == this->_board);
+}
+
+
+Game& Game::operator++()
+{
+  _turn = not _turn;
+  ++ _index;
+  return *this;
 }

@@ -41,12 +41,6 @@ bool Bishop::isBishop() const noexcept
 }
 
 
-void Bishop::move(const int x, const int y)
-{
-
-}
-
-
 vector<vector<int>> Bishop::read() noexcept
 {
   /*
