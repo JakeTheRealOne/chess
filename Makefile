@@ -5,6 +5,7 @@
 CC := g++
 FLAGS := -std=c++17 -Wall -Wextra -Wpedantic -D_GNU_SOURCE -Werror=all -O2
 ICU_FLAGS := -licuuc -licudata -licui18n
+NCURSES_FLAGS := -lncurses
 COMPILE := $(CC)# $(FLAGS)
 
 OBJ_DIR := object
@@ -20,4 +21,5 @@ all:
 	$(COMPILE) -c source/rook.cpp -o object/rook.o
 	$(COMPILE) -c source/king.cpp -o object/king.o
 	$(COMPILE) -c source/game.cpp -o object/game.o
-	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/game.o source/main.cpp -o output
+	$(COMPILE) -c source/getkey.cpp -o object/getkey.o $(NCURSES_FLAGS)
+	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/game.o object/getkey.o source/main.cpp -o output $(NCURSES_FLAGS)

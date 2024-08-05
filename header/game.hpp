@@ -42,6 +42,14 @@ public:
    */
   Game();
 
+  /**
+   * @brief Construct a new Game object
+   * @note Read backup file to play an old saved game 
+   *
+   * @param path The path of the backup file
+   */
+  Game(string path);
+
   // #### Destructor: ####
 
   /**

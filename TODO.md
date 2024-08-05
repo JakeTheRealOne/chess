@@ -1,1 +1,8 @@
+- Finish run() function to handle real game
+- Construct Game::filterMoves(Piece* piece, vector<vector<int>> moves)
+- Construct Game::updateChecks(Piece* piece, vector<int> move)
+- Construct Game::isMate()
 - Add Roque
+- Add 'Save and quit' service
+- Add 'Offer a draw' and 'Give up'
+- Add Boule de crystal (Smart opponent)

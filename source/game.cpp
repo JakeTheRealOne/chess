@@ -69,6 +69,11 @@ Game::Game()
 }
 
 
+Game(string path)
+{
+  // COMING SOON
+}
+
 Game::~Game()
 {
   int count = 0; //< for debug
@@ -103,7 +108,7 @@ Piece* Game::at(const int x, const int y) const noexcept
 {
   if (x < 0 or y < 0 or x > SIZE or y > SIZE)
   {
-    cout << "[WRN] " << (_turn ? "Black" : "White") << " try to get a piece outside the box" << endl;
+    //cout << "[WRN] " << (_turn ? "Black" : "White") << " try to get a piece outside the box" << endl;
     return nullptr;
   }
   return _board[y][x];
@@ -170,6 +175,7 @@ void Game::showMoves(const int x, const int y) noexcept
 
 void Game::move(Piece* piece, const int x, const int y) noexcept
 {
+  // Check the legality of the move:
   vector<int> pos = {x, y};
   vector<vector<int>> available = piece->read();
   if (find(available.begin(), available.end(), pos) == available.end())
@@ -184,12 +190,13 @@ void Game::move(Piece* piece, const int x, const int y) noexcept
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
+  // Update checkList:
 }
 
 
-void filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
+void Game::filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
 {
-  
+
 }
 
 bool Game::operator==(const Game& other) const
