@@ -109,16 +109,20 @@ public:
   /**
    * @brief To display the board of the chess game
    * 
+   * @param currentX The x of the current pos (highlight)
+   * @param currentY The y of the current pos (highlight)
    */
-  void display() const noexcept;
+  void display(const int currentX = -1, const int currentY = -1) const noexcept;
 
   /**
    * @brief To display the board with available moves for the piece at (x, y)
    * 
    * @param x The x pos of the chess piece
    * @param y The y pos of the chess piece
+   * @param currentX The x of the current pos (highlight)
+   * @param currentY The y of the current pos (highlight)
    */
-  void showMoves(const int x, const int y) noexcept;
+  void showMoves(const int x, const int y, const int currentX = -1, const int currentY = -1) noexcept;
 
   /**
    * @brief Move the piece to a new position
@@ -127,7 +131,7 @@ public:
    * @param x The x of target position
    * @param y The y of target position
    */
-  void move(Piece* piece, const int x, const int y) noexcept;
+  bool move(Piece* piece, const int x, const int y) noexcept;
 
   /**
    * @brief Filter the vector moves to only keeps the legal ones

@@ -50,6 +50,13 @@ vector<vector<int>> Queen::read() noexcept
      XXX
     x x x
   */
+  if (_game->index() == _savedIndex)
+  {
+    return _savedMoves;
+  }
+  _savedMoves.clear();
+  _savedIndex = _game->index();
+
   int size = _game->SIZE, offsetX, offsetY, i, j, increI, increJ;
   // Bishop behavior:
   for (int a = 0; a < 4; ++ a)
@@ -71,25 +78,29 @@ vector<vector<int>> Queen::read() noexcept
   // Rook behavior:
   for (int i = _x + 1; i < size; ++ i)
   {
-    if (not checkTarget(i, _y)){
+    if (not checkTarget(i, _y))
+    {
       break;
     }
   }
   for (int i = _x - 1; i >= 0; -- i)
   {
-    if (not checkTarget(i, _y)){
+    if (not checkTarget(i, _y))
+    {
       break;
     }
   }
   for (int i = _y + 1; i < size; ++ i)
   {
-    if (not checkTarget(_x, i)){
+    if (not checkTarget(_x, i))
+    {
       break;
     }
   }
   for (int i = _y - 1; i >= 0; -- i)
   {
-    if (not checkTarget(_x, i)){
+    if (not checkTarget(_x, i))
+    {
       break;
     }
   }

@@ -20,6 +20,9 @@
 # include "../header/king.hpp"
 # include "../header/game.hpp"
 
+// #### Ncurses inclusion: ####
+# include <ncurses.h>
+
 // #### Std inclusions: ####
 # include <vector>
 # include <iostream>
@@ -69,7 +72,7 @@ Game::Game()
 }
 
 
-Game(string path)
+Game::Game(string path)
 {
   // COMING SOON
 }
@@ -108,7 +111,6 @@ Piece* Game::at(const int x, const int y) const noexcept
 {
   if (x < 0 or y < 0 or x > SIZE or y > SIZE)
   {
-    //cout << "[WRN] " << (_turn ? "Black" : "White") << " try to get a piece outside the box" << endl;
     return nullptr;
   }
   return _board[y][x];
@@ -120,15 +122,20 @@ vector<Piece*> Game::checkList() const noexcept
   return this->_checkList;
 }
 
-void Game::display() const noexcept
+
+void Game::display(const int currentX, const int currentY) const noexcept
 {
-  for (const vector<Piece*>& row : _board)
+  Piece* piece;
+  for (int i = 0; i < SIZE; ++ i)
   {
-    for (const Piece* piece : row)
+    for (int j = 0; j < SIZE; ++ j)
     {
-      cout << (piece == nullptr ? '.' : piece->repr()) << " ";
+      piece = _board[i][j];
+      (i == currentY and j == currentX) ? attron(COLOR_PAIR(4)) : 0;
+      printw("%c ", (piece == nullptr ? '.' : piece->repr()));
+      attroff(COLOR_PAIR(4));
     }
-    cout << endl;
+    printw("\n");
   }
 }
 
@@ -145,7 +152,7 @@ int Game::index() const noexcept
 }
 
 
-void Game::showMoves(const int x, const int y) noexcept
+void Game::showMoves(const int x, const int y, const int currentX, const int currentY) noexcept
 {
   Piece* piece = at(x, y);
   if (piece == nullptr)
@@ -162,9 +169,11 @@ void Game::showMoves(const int x, const int y) noexcept
   {
     for (int j = 0; j < SIZE; ++ j)
     {
-      cout << (_drawingBox[i][j] ? 'X' : _board[i][j] == nullptr ? '.' : _board[i][j]->repr()) << " ";
+      (i == currentY and j == currentX) ? attron(COLOR_PAIR(4)) : 0;
+      printw("%c ", _drawingBox[i][j] ? 'X' : _board[i][j] == nullptr ? '.' : _board[i][j]->repr());
+      attroff(COLOR_PAIR(4));
     }
-    cout << endl;
+    printw("\n");
   }
   for (const vector<int>& move : moves)
   {
@@ -173,15 +182,14 @@ void Game::showMoves(const int x, const int y) noexcept
 }
 
 
-void Game::move(Piece* piece, const int x, const int y) noexcept
+bool Game::move(Piece* piece, const int x, const int y) noexcept
 {
   // Check the legality of the move:
   vector<int> pos = {x, y};
-  vector<vector<int>> available = piece->read();
+  vector<vector<int>> available = (piece == nullptr ? vector<vector<int>>(/*empty list*/) : piece->read());
   if (find(available.begin(), available.end(), pos) == available.end())
   {
-    cout << "[WRN] cannot play illegal move: " << x << " " << y << endl;
-    return;
+    return 1;
   }
   if (_board[y][x] != nullptr)
   {
@@ -191,6 +199,7 @@ void Game::move(Piece* piece, const int x, const int y) noexcept
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
   // Update checkList:
+  return 0;
 }
 
 
