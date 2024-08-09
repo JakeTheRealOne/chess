@@ -208,6 +208,23 @@ void Game::filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
 
 }
 
+bool Game::isMate() noexcept
+{
+  Piece* piece;
+  for (int i = 0; i < SIZE; ++ i)
+  {
+    for (int j = 0; j < SIZE; ++ j)
+    {
+      piece = _board[i][j];
+      if (piece != nullptr and piece->player() == _turn and piece->read().size())
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool Game::operator==(const Game& other) const
 {
   return (other._turn == this->_turn and other._board == this->_board);

@@ -1,0 +1,27 @@
+Pick a piece
+to show  its
+legal  moves
+
+Pick a piece
+to see moves
+
+Select one
+of your
+pieces to
+show its
+legal moves
+
+
+   [^]
+[<][v][>]
+[ enter ]
+
+Confirm the
+target of
+your bishop
+
+[ enter ]
+
+or abort
+
+  [ esc ]

@@ -21,5 +21,6 @@ all:
 	$(COMPILE) -c source/rook.cpp -o object/rook.o
 	$(COMPILE) -c source/king.cpp -o object/king.o
 	$(COMPILE) -c source/game.cpp -o object/game.o
-	$(COMPILE) -c source/getkey.cpp -o object/getkey.o $(NCURSES_FLAGS)
-	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/game.o object/getkey.o source/main.cpp -o output $(NCURSES_FLAGS)
+	$(COMPILE) -c source/getkey.cpp -o object/getkey.o
+	$(COMPILE) -c source/tui.cpp -o object/tui.o
+	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/game.o object/getkey.o object/tui.o source/main.cpp -o output $(NCURSES_FLAGS)

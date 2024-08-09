@@ -9,13 +9,12 @@
  * 
  */
 
+
 // /!\ Prereq: ncurses library (-lncurses flag in g++)
+
 
 // #### Ncurses inclusion: ####
 # include <ncurses.h>
-
-# include <iostream>
-using namespace std;
 
 // #### Internal inclusions: ####
 # include "../header/getkey.hpp"

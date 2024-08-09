@@ -32,7 +32,7 @@ class Game
 {
 public:
   // #### Public attributes: ####
-  const int SIZE = 8;
+  int SIZE = 8;
 
   // #### Constructors: ####
 
@@ -140,6 +140,13 @@ public:
    * @param moves The vector of pos {x, y} for each moves
    */
   void filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept;
+
+  /**
+   * @brief Return if there is no more legal move to play for current player
+   * 
+   * @return bool
+   */
+  bool isMate() noexcept;
 
   // #### Operators: ####
 
