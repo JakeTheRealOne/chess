@@ -195,6 +195,11 @@ bool Game::move(Piece* piece, const int x, const int y) noexcept
   {
     delete _board[y][x];
   }
+  else if (piece->isPawn() and piece->x() != x)
+  {
+    delete _board[piece->y()][x];
+    _board[piece->y()][x] = nullptr;
+  }
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);

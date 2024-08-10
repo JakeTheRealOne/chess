@@ -78,7 +78,6 @@ vector<vector<int>> Pawn::read() noexcept
   _savedMoves.clear();
   _savedIndex = _game->index();
 
-
   int size = _game->SIZE;
   int offsetY = _y + (_player ? 1 : -1);
   auto tmp = _game->at(_x, offsetY);
@@ -92,7 +91,7 @@ vector<vector<int>> Pawn::read() noexcept
     }
   }
   offsetY = _y + (_player ? 1 : -1);
-  if (_game->at(_x + 1, offsetY) != nullptr)
+  if (_game->at(_x + 1, offsetY) != nullptr and _game->at(_x + 1, offsetY)->player() != _player)
   {
     _savedMoves.push_back({_x + 1, offsetY});   
   }
@@ -104,7 +103,7 @@ vector<vector<int>> Pawn::read() noexcept
       _savedMoves.push_back({_x + 1, offsetY});
     }
   }
-  if (_game->at(_x - 1, offsetY) != nullptr)
+  if (_game->at(_x - 1, offsetY) != nullptr and _game->at(_x - 1, offsetY)->player() != _player)
   {
     _savedMoves.push_back({_x - 1, offsetY});   
   }

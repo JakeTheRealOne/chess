@@ -79,6 +79,12 @@ public:
   void show() const noexcept;
 
   /**
+   * @brief Compute the screen size and x, y offset for display
+   * 
+   */
+  void computeScreenSize() noexcept;
+
+  /**
    * @brief Move any piece on the chess board
    * 
    * @param oldX The old X pos
@@ -135,6 +141,15 @@ public:
    * @return string What do we show for this piece
    */
   string repr(const int x, const int y, const bool isCursor) const noexcept;
+
+  /**
+   * @brief Update the value at (x, y)
+   * 
+   * @param x The X pos of the value
+   * @param y The Y pos of the value
+   * @param isCursor The flag that indiquates if the cursor is on the pos (x, y)
+   */
+  void update(const int x, const int y, const bool isCursor = false) const noexcept;
 
 private:
   // #### Attributes: ####
