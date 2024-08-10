@@ -79,6 +79,12 @@ public:
   void show() const noexcept;
 
   /**
+   * @brief Resize the TUI to center the board on the screen
+   * 
+   */
+  static void resizeWindow(int sig) noexcept;
+
+  /**
    * @brief Compute the screen size and x, y offset for display
    * 
    */
@@ -115,8 +121,9 @@ public:
    * 
    * @param x The X pos of the chess piece
    * @param y The Y pos of the chess piece
+   * @return bool If there was any moves to show
    */
-  void showMoves(const int x, const int y) noexcept;
+  bool showMoves(const int x, const int y) noexcept;
 
   /**
    * @brief Clean the moves on the board showed with the last TUI::showMoves
@@ -133,23 +140,25 @@ public:
   void moveCursor(const int direction) noexcept;
 
   /**
-   * @brief Get the string representing the piece (or nullptr) at pos (x, y)
+   * @brief Update the case at (x, y)
    * 
-   * @param x The X pos of the piece
-   * @param y The Y pos of the piece
-   * @param isCursor The flag that indiquates if the cursor is on the pos (x, y)
-   * @return string What do we show for this piece
-   */
-  string repr(const int x, const int y, const bool isCursor) const noexcept;
-
-  /**
-   * @brief Update the value at (x, y)
-   * 
-   * @param x The X pos of the value
-   * @param y The Y pos of the value
+   * @param x The X pos of the case
+   * @param y The Y pos of the case
    * @param isCursor The flag that indiquates if the cursor is on the pos (x, y)
    */
   void update(const int x, const int y, const bool isCursor = false) const noexcept;
+
+  /**
+   * @brief Ask to the current player to select a piece
+   * 
+   * @return int A magic value between 0 and 4
+   *  - 0: Abort (no piece selected)
+   *  - 1: Promote the Pawn into a Queen
+   *  - 2: Promote the Pawn into a Rook
+   *  - 3: Promote the Pawn into a Bishop
+   *  - 4: Promote the Pawn into a Knight
+   */
+  int askPromotion() const noexcept;
 
 private:
   // #### Attributes: ####
@@ -166,12 +175,18 @@ private:
    * @brief Initialize the variables of the TUI
    * 
    */
-  void initVars();
+  void initVars() noexcept;
 
   /**
    * @brief Initialize the colors of the TUI
    * 
    */
-  void initColors();
+  void initColors() noexcept;
+
+  /**
+   * @brief Initialize the signal for terminal size
+   * 
+   */
+  void initSignal() noexcept;
 
 };

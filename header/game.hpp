@@ -148,6 +148,16 @@ public:
    */
   bool isMate() noexcept;
 
+  /**
+   * @brief After a move, update _checkList with new checks
+   * @note Has to be called after Game::move
+   * 
+   * @param piece The involved piece
+   * @param x The x of initial position
+   * @param y The y of initial position
+   */
+  void updateCheckList(Piece* piece, const int x, const int y) noexcept;
+
   // #### Operators: ####
 
   /**

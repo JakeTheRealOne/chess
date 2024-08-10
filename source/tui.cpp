@@ -58,7 +58,7 @@ int TUI::y() const noexcept
 }
 
 
-void TUI::initVars()
+void TUI::initVars() noexcept
 {
   ESCDELAY = 0;
   initscr();
@@ -75,11 +75,12 @@ void TUI::initVars()
 }
 
 
-void TUI::initColors()
+void TUI::initColors() noexcept
 {
   // OLD SCHOOL THEME:
   /*init_color(COLOR_WHITE, 823, 705, 549);
   init_color(COLOR_BLUE, 450, 290, 184);*/
+
   // HIKARU THEME:
   init_color(COLOR_WHITE, 1000, 1000, 1000);
   init_color(COLOR_BLUE, 615, 764, 878);
@@ -101,11 +102,18 @@ void TUI::initColors()
 }
 
 
+void TUI::resizeWindow(int sig) noexcept
+{
+
+}
+
 void TUI::computeScreenSize() noexcept
 {
+  static int x = 0;
   getmaxyx(stdscr, _screenHeight, _screenWidth); //< Get screen size to center the board
   _xOffset = ((_screenWidth + 1) >> 1) - 8;
   _yOffset = ((_screenHeight + 1) >> 1) - 4;
+  x += 5;
 }
 
 
@@ -131,7 +139,7 @@ void TUI::move(const int oldX, const int oldY, const int newX, const int newY) n
 {
   clearMoves();
   update(oldX, oldY);
-  update(newX, newY);
+  update(newX, newY, true);
   // En passant
   if (_game->at(newX, newY)->isPawn() and newX != oldX)
   {
@@ -140,13 +148,13 @@ void TUI::move(const int oldX, const int oldY, const int newX, const int newY) n
 }
 
 
-void TUI::showMoves(const int x, const int y) noexcept
+bool TUI::showMoves(const int x, const int y) noexcept
 {
   clearMoves();
   Piece* piece = _game->at(x, y);
   if (piece == nullptr)
   {
-    return;
+    return 0;
   }
   vector<vector<int>> moves = piece->read();
   for (const vector<int>& move : moves)
@@ -157,6 +165,7 @@ void TUI::showMoves(const int x, const int y) noexcept
   {
     update(move[0], move[1]);
   }
+  return (bool)moves.size();
 }
 
 
@@ -209,7 +218,7 @@ void TUI::showHelp(const bool type) const noexcept
 
 void TUI::showMessage(const string& message) const noexcept
 {
-  if (message.size() > 16)
+  if (message.size() > 16 or _yOffset <= 0 or _xOffset < 0)
   {
     return; // Too long
   }
@@ -217,22 +226,19 @@ void TUI::showMessage(const string& message) const noexcept
 }
 
 
-string TUI::repr(const int x, const int y, const bool isCursor) const noexcept
+int TUI::askPromotion() const noexcept
 {
-  if (_moves[x].find(y) != _moves[x].end())
-  {
-    return ".";
-  }
-  Piece* piece = _game->at(x, y);
-  if (piece == nullptr)
-  {
-    return isCursor ? "+" : " ";
-  }
-  return string(1, piece->repr());
+
 }
+
 
 void TUI::update(const int x, const int y, const bool isCursor) const noexcept
 {
+  if (_yOffset + y < 0 or _xOffset + (x << 1) < 0)
+  {
+    return; // Abort (out of bound)
+  }
+
   short colorPair = 1 + ((x + y) % 2);
   string content;
 

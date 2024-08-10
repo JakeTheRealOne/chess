@@ -230,6 +230,13 @@ bool Game::isMate() noexcept
   return true;
 }
 
+
+void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
+{
+  
+}
+
+
 bool Game::operator==(const Game& other) const
 {
   return (other._turn == this->_turn and other._board == this->_board);

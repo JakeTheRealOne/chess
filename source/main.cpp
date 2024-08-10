@@ -75,8 +75,7 @@ void run(Game& game, TUI& tui)
       piece = game.at(pos[0], pos[1]);
       if (piece != nullptr and piece->player() == game.turn())
       {
-        tui.showMoves(pos[0], pos[1]);
-        state = true;
+        state = tui.showMoves(pos[0], pos[1]);
       }
     }
   }
