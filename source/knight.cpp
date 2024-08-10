@@ -67,7 +67,7 @@ vector<vector<int>> Knight::read() noexcept
     offsetX = _x + move[0];
     offsetY = _y + move[1];
     Piece* target = _game->at(offsetX, offsetY);
-    if (0 <= offsetX and 0 <= offsetY and offsetX < size and offsetY < size and  (target == nullptr or target->player() != this->player()))
+    if (0 <= offsetX and 0 <= offsetY and offsetX < size and offsetY < size and (target == nullptr or target->player() != this->player()))
     {
       _savedMoves.push_back({offsetX, offsetY});
     }

@@ -112,8 +112,9 @@ public:
    * @param piece The involved piece
    * @param x The x of target position
    * @param y The y of target position
+   * @param force Indiquate if we force the move
    */
-  bool move(Piece* piece, const int x, const int y) noexcept;
+  bool move(Piece* piece, const int x, const int y, const bool force = false) noexcept;
 
   /**
    * @brief Filter the vector moves to only keeps the legal ones
@@ -171,7 +172,6 @@ public:
 private:
   // #### Attributes: ####
   vector<vector<Piece*>> _board;
-  vector<vector<bool>> _drawingBox; //< To display moves, check etc.
   vector<Piece*> _checkList; //< The list of piece checking current player
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)
   King* _whiteKing;

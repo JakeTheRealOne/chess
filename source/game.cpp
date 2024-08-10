@@ -36,7 +36,6 @@ Game::Game()
   for (int y = 0; y < SIZE; ++ y)
   {
     _board.push_back(vector<Piece*>(SIZE, nullptr));
-    _drawingBox.push_back(vector<bool>(SIZE, false));
   }
 
   for (int x = 0; x < SIZE; ++ x) // Pawns
@@ -110,7 +109,7 @@ bool Game::turn() const noexcept
 
 Piece* Game::at(const int x, const int y) const noexcept
 {
-  if (x < 0 or y < 0 or x > SIZE or y > SIZE)
+  if (x < 0 or y < 0 or x >= SIZE or y >= SIZE)
   {
     return nullptr;
   }
@@ -136,12 +135,12 @@ int Game::index() const noexcept
 }
 
 
-bool Game::move(Piece* piece, const int x, const int y) noexcept
+bool Game::move(Piece* piece, const int x, const int y, const bool force) noexcept
 {
   // Check the legality of the move:
   vector<int> pos = {x, y};
   vector<vector<int>> available = (piece == nullptr ? vector<vector<int>>(/*empty list*/) : piece->read());
-  if (find(available.begin(), available.end(), pos) == available.end())
+  if (not force and find(available.begin(), available.end(), pos) == available.end())
   {
     return 1;
   }
@@ -196,9 +195,6 @@ Piece* Game::promote(Piece* piece, int promotion)
   int x = piece->x(), y = piece->y();
   switch (promotion)
   {
-    case 0:
-      throw runtime_error("Cancelling promotion is not yet supported");
-      break;
     case 1:
       newPiece = new Queen(piece->player(), piece->x(), piece->y(), this);
       break;
@@ -217,6 +213,7 @@ Piece* Game::promote(Piece* piece, int promotion)
   }
   _board[y][x] = newPiece;
   delete piece;
+
   return newPiece;
 }
 

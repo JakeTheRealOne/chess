@@ -12,6 +12,7 @@
 
 // #### Ncurses inclusion: ####
 # include <ncurses.h>
+#include <stdexcept>
 
 
 // #### Internal inclusions: ####
@@ -64,15 +65,20 @@ void run(Game& game, TUI& tui)
       else
       {
         x = piece->x(), y = piece->y();
-        if (not game.move(piece, pos[0], pos[1]))
-        {
-          isOver = true;
-          if (piece->isPawn() and pos[1] == 7 or not pos[1])
+        if (piece->isPawn() and (pos[1] == 7 or not pos[1]) and abs(pos[0] - piece->x()) == 1)
           {
             int promotion = tui.askPromotion();
-            piece = game.promote(piece, promotion);
+            if (promotion)
+            {
+              piece = game.promote(piece, promotion);
+              isOver = not game.move(piece, pos[0], pos[1], true);
+            }
+            tui.showMessage(game.turn() ? "Black's turn" : "White's turn");
             tui.show();
           }
+        else
+        {
+          isOver = not game.move(piece, pos[0], pos[1]);
         }
       }
     }
@@ -90,11 +96,9 @@ void run(Game& game, TUI& tui)
 }
 
 
-int executeGame()
+int newGame(TUI& tui, Game& game)
 {
   bool endOfGame = false;
-  Game game;
-  TUI tui(&game);
   tui.show();
   while (not endOfGame)
   {
@@ -112,8 +116,26 @@ int executeGame()
   return 0;
 }
 
+int menu()
+{
+  Game game;
+  TUI tui(&game);
+  int input = tui.getMenuOption();
+  switch (input)
+  {
+    case 0:
+      return 0;
+    case 1:
+      clear();
+      return newGame(tui, game);
+    default:
+      throw runtime_error("comming soon");
+  }
+  return 0;
+}
+
 
 int main()
 {
-  return executeGame();
+  return menu();
 }

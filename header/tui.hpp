@@ -36,7 +36,10 @@ class TUI
 {
 public:
   // #### Public attributes: ####
-  const vector<string> PROMOTION_OPTIONS = {"     Queen     ", "      Rook      ", "     Bishop     ",  "     Knight     "};
+  const vector<string> PROMOTION_OPTIONS = {"  Queen         ", "  Rook          ", "  Bishop        ", "  Knight        "};
+  const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "    Controls    "};
+  const vector<string> LOGO = {"       _                   ", "   ___| |__   ___  ___ ___ ", "  / __| '_ \\ / _ \\/ __/ __|", " | (__| | | |  __/\\__ \\__ \\", "  \\___|_| |_|\\___||___/___/"};
+  const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5;
 
   // #### Constructors: ####
 
@@ -76,6 +79,16 @@ public:
    */
   int y() const noexcept;
 
+  // #### Setters: ####
+
+  /**
+   * @brief Set the game of the TUI
+   * @throw std::invalid_argument if the pointer is nullptr
+   * 
+   * @param newGame The new game of the TUI
+   */
+  void setGame(Game* newGame);
+
   // #### Methods: ####
 
   /**
@@ -112,8 +125,15 @@ public:
    * @param type The type of the help message
    *   0 = Piece selection
    *   1 = Target selection
+   *   2 = Pawn promotion
    */
-  void showHelp(const bool type) const noexcept;
+  void showHelp(const short type) const noexcept;
+
+  /**
+   * @brief Show the chess logo
+   * 
+   */
+  void showLogo() const noexcept;
 
   /**
    * @brief Show any message above the board
@@ -121,6 +141,12 @@ public:
    * @param message The message (lenght < 17) to display
    */
   void showMessage(const string& message) const noexcept;
+
+  /**
+   * @brief Display the main menu
+   * 
+   */
+  void showMenu() const noexcept;
 
   /**
    * @brief Show the moves of the chess piece at pos (x, y)
@@ -140,6 +166,9 @@ public:
   /**
    * @brief Change the promotion selected in the promotion panel
    * 
+   * @param index The current index
+   * @param increment The increment
+   * @return int The updated index
    */
   int changePromotion(int index, int increment) const noexcept;
 
@@ -177,6 +206,27 @@ public:
    *  - 4: Promote the Pawn into a Knight
    */
   int askPromotion() const noexcept;
+
+  /**
+   * @brief Get an option in the menu (ask to user)
+   * 
+   * @return int A magic value between 0 and 4
+   *  - 0: Abort (Quit the program)
+   *  - 1: Start a new game
+   *  - 2: Load a saved game
+   *  - 3: Open the theme menu
+   *  - 4: Open the controls menu
+   */
+  int getMenuOption() const noexcept;
+
+  /**
+   * @brief Change the index of the current selected option in the menu
+   * 
+   * @param index The current index
+   * @param increment The increment
+   * @return int The updated index
+   */
+  int changeMenu(int index, int increment) const noexcept;
 
 private:
   // #### Attributes: ####

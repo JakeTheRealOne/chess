@@ -11,6 +11,7 @@
 
 
 // #### Std inclusions: ####
+#include <stdexcept>
 # include <vector>
 # include <string>
 # include <unordered_set>
@@ -57,6 +58,15 @@ int TUI::y() const noexcept
   return _y;
 }
 
+
+void TUI::setGame(Game* newGame)
+{
+  if (newGame == nullptr)
+  {
+    throw invalid_argument("TUI::setGame needs an initialized game pointer");
+  }
+  _game = newGame;
+}
 
 void TUI::initVars() noexcept
 {
@@ -212,9 +222,34 @@ void TUI::moveCursor(const int direction) noexcept
 }
 
 
-void TUI::showHelp(const bool type) const noexcept
+void TUI::showHelp(const short type) const noexcept
 {
   // TODO
+}
+
+
+void TUI::showLogo() const noexcept
+{
+  int yOffset = _yOffset - LOGO_HEIGHT - 1, xOffset = _xOffset - ((LOGO_WIDTH - (_game->SIZE << 1)) >> 1) - 1, rowIndex = 0;
+  for (const string& row : LOGO)
+  {
+    mvprintw(yOffset + rowIndex, xOffset, "%s", row.c_str());
+    ++ rowIndex;
+  }
+}
+
+
+void TUI::showMenu() const noexcept
+{
+  clear();
+  showLogo();
+  for (int index = 0; index < 4; ++ index)
+  {
+    short pair = 9 + (bool)index;
+    attron(COLOR_PAIR(pair));
+    mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", MENU_OPTIONS[index].c_str());
+    attroff(COLOR_PAIR(pair));
+  }
 }
 
 
@@ -225,6 +260,7 @@ void TUI::showMessage(const string& message) const noexcept
     return; // Too long
   }
   mvprintw(_yOffset - 1, _xOffset, "%s", message.c_str());
+  mvprintw(_yOffset - 1, _xOffset + message.size(), "%s", string(16 - message.size(), ' ').c_str());
 }
 
 
@@ -280,6 +316,43 @@ int TUI::askPromotion() const noexcept
   return (bool)input * (menuIndex + 1); // TODO
 }
 
+
+int TUI::getMenuOption() const noexcept
+{
+  int input, menuIndex = 0;
+  showMenu();
+  do
+  {
+    input = getkey();
+    if (input == 2 or input == 3)
+    {
+      menuIndex = changeMenu(menuIndex, input == 2 ? -1 : 1);
+    }
+  }
+  while (input and input != 1);
+  return (bool)input * (menuIndex + 1); // TODO
+}
+
+
+int TUI::changeMenu(int index, int increment) const noexcept
+{
+  if (index + increment < 0 or index + increment >= MENU_OPTIONS.size())
+  {
+    return index; // Abort
+  }
+
+  attron(COLOR_PAIR(10));
+  mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", MENU_OPTIONS[index].c_str());
+  attroff(COLOR_PAIR(10));
+
+  index += increment;
+
+  attron(COLOR_PAIR(9));
+  mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", MENU_OPTIONS[index].c_str());
+  attroff(COLOR_PAIR(9));
+
+  return index;
+}
 
 
 void TUI::update(const int x, const int y, const bool isCursor) const noexcept
