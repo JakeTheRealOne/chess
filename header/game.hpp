@@ -32,7 +32,7 @@ class Game
 {
 public:
   // #### Public attributes: ####
-  int SIZE = 8;
+  const int SIZE = 8;
 
   // #### Constructors: ####
 
@@ -107,24 +107,6 @@ public:
   // #### Methods: ####
 
   /**
-   * @brief To display the board of the chess game
-   * 
-   * @param currentX The x of the current pos (highlight)
-   * @param currentY The y of the current pos (highlight)
-   */
-  void display(const int currentX = -1, const int currentY = -1) const noexcept;
-
-  /**
-   * @brief To display the board with available moves for the piece at (x, y)
-   * 
-   * @param x The x pos of the chess piece
-   * @param y The y pos of the chess piece
-   * @param currentX The x of the current pos (highlight)
-   * @param currentY The y of the current pos (highlight)
-   */
-  void showMoves(const int x, const int y, const int currentX = -1, const int currentY = -1) noexcept;
-
-  /**
    * @brief Move the piece to a new position
    * 
    * @param piece The involved piece
@@ -157,6 +139,16 @@ public:
    * @param y The y of initial position
    */
   void updateCheckList(Piece* piece, const int x, const int y) noexcept;
+
+  /**
+   * @brief Promote a chess piece
+   * @throw std::runtime_error If the player try to abort 
+   *
+   * @param piece The involved piece
+   * @param promotion Magic value between 0 and 4 (see TUI::askPromotion in header/tui.hpp)
+   * @return The pointer of the new piece (after promotion)
+   */
+  Piece* promote(Piece* piece, int promotion);
 
   // #### Operators: ####
 

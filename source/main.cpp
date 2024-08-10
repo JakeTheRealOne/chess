@@ -20,10 +20,6 @@
 # include "../header/getkey.hpp"
 # include "../header/tui.hpp"
 
-// #### Std inclusions: ####
-# include <iostream>
-using namespace std;
-
 
 vector<int> getPos(TUI& tui, bool abortFlag)
 {
@@ -48,6 +44,7 @@ vector<int> getPos(TUI& tui, bool abortFlag)
   }
 }
 
+
 void run(Game& game, TUI& tui)
 {
   bool state = false, isOver = false;
@@ -67,7 +64,16 @@ void run(Game& game, TUI& tui)
       else
       {
         x = piece->x(), y = piece->y();
-        isOver = not game.move(piece, pos[0], pos[1]);
+        if (not game.move(piece, pos[0], pos[1]))
+        {
+          isOver = true;
+          if (piece->isPawn() and pos[1] == 7 or not pos[1])
+          {
+            int promotion = tui.askPromotion();
+            piece = game.promote(piece, promotion);
+            tui.show();
+          }
+        }
       }
     }
     else
@@ -82,6 +88,7 @@ void run(Game& game, TUI& tui)
   tui.move(x, y, piece->x(), piece->y());
   ++ game;
 }
+
 
 int executeGame()
 {
@@ -104,6 +111,7 @@ int executeGame()
   }
   return 0;
 }
+
 
 int main()
 {

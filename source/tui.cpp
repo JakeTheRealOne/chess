@@ -78,8 +78,10 @@ void TUI::initVars() noexcept
 void TUI::initColors() noexcept
 {
   // OLD SCHOOL THEME:
-  /*init_color(COLOR_WHITE, 823, 705, 549);
-  init_color(COLOR_BLUE, 450, 290, 184);*/
+  /*
+  init_color(COLOR_WHITE, 823, 705, 549);
+  init_color(COLOR_BLUE, 450, 290, 184);
+  */
 
   // HIKARU THEME:
   init_color(COLOR_WHITE, 1000, 1000, 1000);
@@ -99,12 +101,15 @@ void TUI::initColors() noexcept
 
   init_pair(7, -1, COLOR_WHITE); // Default color
   init_pair(8, -1, COLOR_BLUE);
+
+  init_pair(9, COLOR_BLACK, COLOR_WHITE); // Promotion panel
+  init_pair(10, COLOR_WHITE, -1);
 }
 
 
 void TUI::resizeWindow(int sig) noexcept
 {
-
+  // TODO
 }
 
 void TUI::computeScreenSize() noexcept
@@ -119,16 +124,13 @@ void TUI::computeScreenSize() noexcept
 
 void TUI::show() const noexcept
 {
-  bool paintFlag = 0; 
   // Board
   for (int i = 0; i < _game->SIZE; ++ i)
   {
     for (int j = 0; j < _game->SIZE; ++ j)
     {
       update(i, j);
-      paintFlag = not paintFlag;
     }
-    paintFlag = not paintFlag;
   }
   // Cursor
   update(_x, _y, true);
@@ -226,10 +228,58 @@ void TUI::showMessage(const string& message) const noexcept
 }
 
 
+void TUI::showPromotionPanel() const noexcept
+{
+  clear();
+  showMessage("Promotion panel");
+
+  for (int index = 0; index < 4; ++ index)
+  {
+    short pair = 9 + (bool)index;
+    attron(COLOR_PAIR(pair));
+    mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", PROMOTION_OPTIONS[index].c_str());
+    attroff(COLOR_PAIR(pair));
+  }
+}
+
+
+int TUI::changePromotion(int index, int increment) const noexcept
+{
+  if (index + increment < 0 or index + increment >= PROMOTION_OPTIONS.size())
+  {
+    return index; // Abort
+  }
+
+  attron(COLOR_PAIR(10));
+  mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", PROMOTION_OPTIONS[index].c_str());
+  attroff(COLOR_PAIR(10));
+
+  index += increment;
+
+  attron(COLOR_PAIR(9));
+  mvprintw(_yOffset + (index << 1) + 1, _xOffset, "%s", PROMOTION_OPTIONS[index].c_str());
+  attroff(COLOR_PAIR(9));
+
+  return index;
+}
+
+
 int TUI::askPromotion() const noexcept
 {
-
+  int input, menuIndex = 0;
+  showPromotionPanel();
+  do
+  {
+    input = getkey();
+    if (input == 2 or input == 3)
+    {
+      menuIndex = changePromotion(menuIndex, input == 2 ? -1 : 1);
+    }
+  }
+  while (input and input != 1);
+  return (bool)input * (menuIndex + 1); // TODO
 }
+
 
 
 void TUI::update(const int x, const int y, const bool isCursor) const noexcept

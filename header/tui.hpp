@@ -22,16 +22,22 @@
 // #### Std inclusions: ####
 # include <vector>
 # include <unordered_set>
+# include <string>
 using namespace std;
 
 
 /**
  * @brief The TUI class represent the TUI of a chess game (everything on screen)
+ * @note The TUI class do not modify the game values (pos, etc.), It just sample them to
+ * display them on the screen
  * 
  */
 class TUI
 {
 public:
+  // #### Public attributes: ####
+  const vector<string> PROMOTION_OPTIONS = {"     Queen     ", "      Rook      ", "     Bishop     ",  "     Knight     "};
+
   // #### Constructors: ####
 
   /**
@@ -124,6 +130,18 @@ public:
    * @return bool If there was any moves to show
    */
   bool showMoves(const int x, const int y) noexcept;
+
+  /**
+   * @brief Display the promotion panel
+   * 
+   */
+  void showPromotionPanel() const noexcept;
+
+  /**
+   * @brief Change the promotion selected in the promotion panel
+   * 
+   */
+  int changePromotion(int index, int increment) const noexcept;
 
   /**
    * @brief Clean the moves on the board showed with the last TUI::showMoves

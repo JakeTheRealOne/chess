@@ -24,6 +24,7 @@
 # include <ncurses.h>
 
 // #### Std inclusions: ####
+# include <stdexcept>
 # include <vector>
 # include <iostream>
 # include <algorithm>
@@ -68,7 +69,7 @@ Game::Game()
   _board[0][4] = _blackKing;
 
   // debug:
-  _board[4][3] = new Pawn(1, 3, 4, this);
+  _board[6][3] = new Pawn(1, 3, 6, this);
 }
 
 
@@ -123,23 +124,6 @@ vector<Piece*> Game::checkList() const noexcept
 }
 
 
-void Game::display(const int currentX, const int currentY) const noexcept
-{
-  Piece* piece;
-  for (int i = 0; i < SIZE; ++ i)
-  {
-    for (int j = 0; j < SIZE; ++ j)
-    {
-      piece = _board[i][j];
-      (i == currentY and j == currentX) ? attron(COLOR_PAIR(4)) : 0;
-      printw("%c ", (piece == nullptr ? '.' : piece->repr()));
-      attroff(COLOR_PAIR(4));
-    }
-    printw("\n");
-  }
-}
-
-
 Piece* Game::king(const bool player) const noexcept
 {
   return player ? _blackKing : _whiteKing;
@@ -149,36 +133,6 @@ Piece* Game::king(const bool player) const noexcept
 int Game::index() const noexcept
 {
   return this->_index;
-}
-
-
-void Game::showMoves(const int x, const int y, const int currentX, const int currentY) noexcept
-{
-  Piece* piece = at(x, y);
-  if (piece == nullptr)
-  {
-    display();
-    return;
-  }
-  const vector<vector<int>> moves = piece->read();
-  for (const vector<int>& move : moves)
-  {
-    _drawingBox[move[1]][move[0]] = true;
-  }
-  for (int i = 0; i < SIZE; ++ i)
-  {
-    for (int j = 0; j < SIZE; ++ j)
-    {
-      (i == currentY and j == currentX) ? attron(COLOR_PAIR(4)) : 0;
-      printw("%c ", _drawingBox[i][j] ? 'X' : _board[i][j] == nullptr ? '.' : _board[i][j]->repr());
-      attroff(COLOR_PAIR(4));
-    }
-    printw("\n");
-  }
-  for (const vector<int>& move : moves)
-  {
-    _drawingBox[move[1]][move[0]] = false;
-  }
 }
 
 
@@ -203,7 +157,6 @@ bool Game::move(Piece* piece, const int x, const int y) noexcept
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
-  // Update checkList:
   return 0;
 }
 
@@ -233,7 +186,38 @@ bool Game::isMate() noexcept
 
 void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
 {
-  
+
+}
+
+
+Piece* Game::promote(Piece* piece, int promotion)
+{
+  Piece* newPiece;
+  int x = piece->x(), y = piece->y();
+  switch (promotion)
+  {
+    case 0:
+      throw runtime_error("Cancelling promotion is not yet supported");
+      break;
+    case 1:
+      newPiece = new Queen(piece->player(), piece->x(), piece->y(), this);
+      break;
+    case 2:
+      newPiece = new Rook(piece->player(), piece->x(), piece->y(), this);
+      break;
+    case 3:
+      newPiece = new Bishop(piece->player(), piece->x(), piece->y(), this);
+      break;
+    case 4:
+      newPiece = new Knight(piece->player(), piece->x(), piece->y(), this);
+      break;
+    default:
+      throw runtime_error("Unknown promotion");
+      break;
+  }
+  _board[y][x] = newPiece;
+  delete piece;
+  return newPiece;
 }
 
 
