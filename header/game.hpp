@@ -249,4 +249,44 @@ private:
    * @param moves The moves of the king (vector of pos {x, y})
    */
   void filterNotKingMoves(Piece* piece, vector<vector<int>>& moves);
+
+  /**
+   * @brief Helper for filterKingMoves, return if a knight is near the king
+   * 
+   * @param piece The involved king
+   * @return bool
+   */
+  bool knightNear(Piece* piece);
+
+  /**
+   * @brief Helper for filterKingMoves, return if a queen and rook is near the king
+   * 
+   * @param piece The involved king
+   * @return bool
+   */
+  bool rookAndQueenNear(Piece* piece);
+
+  /**
+   * @brief Helper for filterKingMoves, return if a queen or bishop is near the king
+   * 
+   * @param piece The involved king
+   * @return bool
+   */
+  bool bishopAndQueenNear(Piece* piece);
+
+  /**
+   * @brief Helper for filterKingMoves, return if a pawn is near the king
+   * 
+   * @param piece The involved king
+   * @return bool
+   */
+  bool pawnNear(Piece* piece);
+
+  /**
+   * @brief Helper for filterKingMoves, return if a king is near the king
+   * 
+   * @param piece The involved king
+   * @return bool
+   */
+  bool kingNear(Piece* piece);
 };

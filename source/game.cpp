@@ -31,6 +31,8 @@
 using namespace std;
 
 
+extern vector<vector<int>> KNIGHT_MOVES;
+
 Game::Game()
 {
   for (int y = 0; y < SIZE; ++ y)
@@ -161,6 +163,9 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force) noexce
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
+
+  static int tmp = 1;
+  ++ tmp;
   return 0;
 }
 
@@ -190,8 +195,29 @@ void Game::filterMoves(Piece* piece, vector<vector<int>>& moves)
 
 void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves)
 {
-
+  int x = piece->x(), y = piece->y(), moveX, moveY, n = moves.size();
+  Piece* previous;
+  for (int i = 0; i < n; ++ i)
+  {
+    moveX = moves[i][0], moveY = moves[i][1];
+    previous = _board[moveY][moveX];
+    _board[moveY][moveX] = piece;
+    _board[y][x] = previous;
+    piece->move(moveX, moveY);
+    bool notSafe = knightNear(piece) or rookAndQueenNear(piece) or bishopAndQueenNear(piece) or pawnNear(piece) or kingNear(piece);
+    _board[moveY][moveX] = previous;
+    _board[y][x] = piece;
+    piece->move(x, y);
+    if (notSafe)
+    {
+      swap(moves[i], moves.back());
+      moves.pop_back();
+      -- n;
+      -- i;
+    }
+  }
 }
+
 
 
 void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
@@ -201,11 +227,12 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
     moves.clear();
     return;
   }
+  Piece* myKing = king(piece->player());
+  int x = piece->x(), y = piece->y(), moveX, moveY, n = moves.size();
   if (_checkList.size()) // single check: has to be stopped
   {
-    Piece* threat = _checkList[0], * myKing = king(piece->player());
+    Piece* threat = _checkList[0];
     bool canBeBlocked = threat->isRook() or threat->isBishop() or threat->isQueen();
-    int x = piece->x(), y = piece->y(), moveX, moveY, n = moves.size();
     for (int i = 0; i < n; ++ i)
     {
       moveX = moves[i][0], moveY = moves[i][1];
@@ -232,6 +259,37 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
       -- n;
       -- i;
     }
+  }
+  // Check if the piece is pinned & remove moves that leave the restricted area of pin (I know what Im talking about)
+  Piece* pinned = isDiscoveryCheck(piece->x(), piece->y(), piece->player());
+  if (pinned != nullptr)
+  {
+    for (int i = 0; i < n; ++ i)
+    {
+      moveX = moves[i][0], moveY = moves[i][1];
+      if (moveX == pinned->x() and moveY == pinned->y())
+      {
+        continue;
+      }
+      if (_board[moveY][moveX] == nullptr)
+      {
+        _board[moveY][moveX] = piece;
+        _board[y][x] = nullptr;
+        piece->move(moveX, moveY);
+        bool blocked = not pinned->threat(myKing);
+        _board[moveY][moveX] = nullptr;
+        _board[y][x] = piece;
+        piece->move(x, y);
+        if (blocked)
+        {
+          continue;
+        }
+      }
+      swap(moves[i], moves.back());
+      moves.pop_back();
+      -- n;
+      -- i;   
+    } 
   }
 }
 
@@ -481,4 +539,46 @@ Game& Game::operator++()
   _turn = not _turn;
   ++ _index;
   return *this;
+}
+
+
+bool Game::knightNear(Piece* piece)
+{
+  Piece* target;
+  int targetX, targetY;
+  for (const vector<int>& knighMove : KNIGHT_MOVES)
+  {
+    targetX = piece->x() + knighMove[0];
+    targetY = piece->y() + knighMove[1];
+    target = at(targetX, targetY);
+    if (target != nullptr and target->isKnight() and target->player() != piece->player())
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool Game::rookAndQueenNear(Piece* piece)
+{
+  return false; // TODO
+}
+
+
+bool Game::bishopAndQueenNear(Piece* piece)
+{
+  return false; // TODO
+}
+
+
+bool Game::pawnNear(Piece* piece)
+{
+  return false; // TODO
+}
+
+
+bool Game::kingNear(Piece* piece)
+{
+  return false; // TODO
 }

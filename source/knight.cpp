@@ -21,7 +21,7 @@ using namespace std;
 # include "../header/piece.hpp"
 
 
-const vector<vector<int>> KNIGHT_MOVES = {{2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}};
+vector<vector<int>> KNIGHT_MOVES = {{2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}};
 
 
 Knight::Knight():
