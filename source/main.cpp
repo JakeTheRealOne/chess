@@ -104,8 +104,8 @@ int newGame(TUI& tui, Game& game)
   while (not endOfGame)
   {
     run(game, tui);
-    mvprintw(0, 0, "N OF CHECK: %d", (int)game.checkList().size());
     endOfGame = game.isMate();
+    mvprintw(0, 0, "N OF CHECK: %d", (int)game.checkList().size());
   }
   if (game.checkList().size())
   {

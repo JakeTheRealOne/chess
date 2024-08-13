@@ -65,6 +65,14 @@ public:
    */
   vector<vector<int>> read() noexcept override;
 
+  /**
+   * @brief Return if the king threatens another piece
+   * 
+   * @param piece The target piece
+   * @return bool
+   */
+  bool threat(Piece* piece) override;
+
   // #### Operator: ####
 
   /**

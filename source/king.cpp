@@ -75,6 +75,13 @@ vector<vector<int>> King::read() noexcept
 }
 
 
+bool King::threat(Piece* piece)
+{
+  int diffX = abs(_x - piece->x()), diffY = abs(_y - piece->y());
+  return diffX == 1 or diffY == 1;
+}
+
+
 ostream& operator<<(ostream& stream, const King& me)
 {
   stream << "King(" << (me._player ? "black" : "white")

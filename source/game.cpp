@@ -186,6 +186,7 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   // Direct check
   if (piece->threat(king(not piece->player())))
   {
+    mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str());
     _checkList.push_back(piece);
   }
   // Discovery check
@@ -205,6 +206,7 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   Piece* threat = isDiscoveryCheck(x, y,  not piece->player());
   if (threat != nullptr)
   {
+    mvprintw(3, 0, "DISCOVERY THREAT %s", string(1, threat->repr()).c_str());
     _checkList.push_back(threat);
   }
 }
