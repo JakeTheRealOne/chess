@@ -109,6 +109,66 @@ vector<vector<int>> Queen::read() noexcept
 }
 
 
+bool Queen::threat(Piece* piece)
+{
+  if (_x == piece->x())
+  {
+    int lowerBound = _y < piece->y() ? _y + 1 : piece->y() + 1,
+        upperBound = _y < piece->y() ? piece->y() : _y;
+    for (int index = lowerBound; index < upperBound; ++ index)
+    {
+      if (_game->at(_x, index) != nullptr)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  else if (_y == piece->y())
+  {
+    int lowerBound = _x < piece->x() ? _x + 1 : piece->x() + 1,
+    upperBound = _x < piece->x() ? piece->x() : _x;
+    for (int index = lowerBound; index < upperBound; ++ index)
+    {
+      if (_game->at(index, _y) != nullptr)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  else if (_x - _y == piece->x() - piece->y())
+  { // Diag A
+    int increment = _x < piece->x() ? +1 : -1;
+    int currentX = _x + increment, currentY = _y + increment;
+    while (currentX < piece->x())
+    {
+      if (_game->at(currentX, currentY) != nullptr)
+      {
+        return false;
+      }
+      currentX += increment, currentY += increment;
+    }
+    return true;
+  }
+  else if (_x + _y == piece->x() + piece->y())
+  { // Diag B
+    int increment = _x < piece->x() ? +1 : -1;
+    int currentX = _x + increment, currentY = _y - increment;
+    while (currentX < piece->x())
+    {
+      if (_game->at(currentX, currentY) != nullptr)
+      {
+        return false;
+      }
+      currentX += increment, currentY -= increment;
+    }
+    return true;
+  }
+  return false;
+}
+
+
 ostream& operator<<(ostream& stream, const Queen& me)
 {
   stream << "Queen(" << (me._player ? "black" : "white")
