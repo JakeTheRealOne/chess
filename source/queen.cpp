@@ -104,6 +104,7 @@ vector<vector<int>> Queen::read() noexcept
       break;
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
 }
 

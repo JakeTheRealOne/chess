@@ -70,6 +70,7 @@ vector<vector<int>> King::read() noexcept
       }
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
 }
 

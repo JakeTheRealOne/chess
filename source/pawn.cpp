@@ -115,6 +115,7 @@ vector<vector<int>> Pawn::read() noexcept
     _savedMoves.push_back({_x - 1, offsetY});
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
 }
 

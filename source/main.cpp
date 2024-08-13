@@ -92,6 +92,7 @@ void run(Game& game, TUI& tui)
     }
   }
   tui.move(x, y, piece->x(), piece->y());
+  game.updateCheckList(piece, x, y);
   ++ game;
 }
 
@@ -103,6 +104,7 @@ int newGame(TUI& tui, Game& game)
   while (not endOfGame)
   {
     run(game, tui);
+    mvprintw(0, 0, "N OF CHECK: %d", (int)game.checkList().size());
     endOfGame = game.isMate();
   }
   if (game.checkList().size())
@@ -113,6 +115,7 @@ int newGame(TUI& tui, Game& game)
   {
     tui.showMessage("Stalemate");
   }
+  getch(); //< Wait for user to quit
   return 0;
 }
 
@@ -120,18 +123,20 @@ int menu()
 {
   Game game;
   TUI tui(&game);
-  int input = tui.getMenuOption();
-  switch (input)
+  while (true)
   {
-    case 0:
-      return 0;
-    case 1:
-      clear();
-      return newGame(tui, game);
-    default:
-      throw runtime_error("comming soon");
+    int input = tui.getMenuOption();
+    switch (input)
+    {
+      case 0:
+        return 0;
+      case 1:
+        clear();
+        newGame(tui, game);
+      default:
+        throw runtime_error("comming soon");
+    }
   }
-  return 0;
 }
 
 

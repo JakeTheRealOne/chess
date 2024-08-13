@@ -172,6 +172,23 @@ public:
    */
   virtual vector<vector<int>> read();
 
+  /**
+   * @brief Return if the piece threatens another piece
+   * 
+   * @param piece The target piece
+   * @return false Because an empty piece cannot threat any other piece
+   */
+  virtual bool threat(Piece* piece);
+
+  /**
+   * @brief Return if the piece is pinned to another piece
+   * 
+   * @param source The threat Piece
+   * @param target The target Piece of the threat
+   * @return false becausre an empty piece cannot block any attack
+   */
+  virtual bool pinned(Piece* source, Piece* target);
+
   // #### Operators: ####
 
   /**

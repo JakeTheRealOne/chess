@@ -72,9 +72,20 @@ vector<vector<int>> Knight::read() noexcept
       _savedMoves.push_back({offsetX, offsetY});
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
 }
 
+
+bool Knight::threat(Piece* piece)
+{
+  if (piece == nullptr)
+  {
+    return false;
+  }
+  int diffX = abs(_x - piece->x()), diffY = abs(_y - piece->y());
+  return (diffX == 1 and diffY == 2) or (diffX == 2 and diffY == 1);
+}
 
 ostream& operator<<(ostream& stream, const Knight& me)
 {

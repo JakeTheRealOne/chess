@@ -162,6 +162,18 @@ vector<vector<int>> Piece::read()
 }
 
 
+bool Piece::threat(Piece*  piece)
+{
+  return false;
+}
+
+
+bool Piece::pinned(Piece* threat, Piece* target)
+{
+  return false;
+}
+
+
 bool Piece::operator==(const Piece& other) const noexcept
 {
   return (this->_player == other._player)

@@ -74,6 +74,7 @@ vector<vector<int>> Bishop::read() noexcept
       j += increJ;
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
 }
 

@@ -142,6 +142,16 @@ public:
   void updateCheckList(Piece* piece, const int x, const int y) noexcept;
 
   /**
+   * @brief Return if (x, y) are between its king and a threat (ROW, COL, DIAG)
+   * 
+   * @param x The X pos
+   * @param y The Y pos
+   * @param player The owner of the king 
+   * @return Piece* The threat (if there is none, nullptr)
+   */
+  Piece* isDiscoveryCheck(const int x, const int y, const bool player) noexcept;
+
+  /**
    * @brief Promote a chess piece
    * @throw std::runtime_error If the player try to abort 
    *
@@ -187,4 +197,48 @@ private:
    * @param piece The piece that want to move
    */
   void filterMoves(vector<vector<int>>& moves, Piece* piece);
+
+  /**
+   * @brief Helper for isDiscoveryCheck, check for possible threat on the same row as the king
+   * 
+   * @param x The X pos
+   * @param y The Y pos
+   * @param player The owner of the king
+   * @param king The king that might be in check
+   * @return Piece* The piece that is checking the king (or nullptr if none)
+   */
+  Piece* discoverRow(const int x, const int y, const bool player, Piece* king) noexcept;
+
+  /**
+   * @brief Helper for isDiscoveryCheck, check for possible threat on the same column as the king
+   * 
+   * @param x The X pos
+   * @param y The Y pos
+   * @param player The owner of the king
+   * @param king The king that might be in check
+   * @return Piece* The piece that is checking the king (or nullptr if none)
+   */
+  Piece* discoverCol(const int x, const int y, const bool player, Piece* king) noexcept;
+
+  /**
+   * @brief Helper for isDiscoveryCheck, check for possible threat on the same diagonal (A) as the king
+   * 
+   * @param x The X pos
+   * @param y The Y pos
+   * @param player The owner of the king
+   * @param king The king that might be in check
+   * @return Piece* The piece that is checking the king (or nullptr if none)
+   */
+  Piece* discoverDiagA(const int x, const int y, const bool player, Piece* king) noexcept;
+
+  /**
+   * @brief Helper for isDiscoveryCheck, check for possible threat on the same diagonal (B) as the king
+   * 
+   * @param x The X pos
+   * @param y The Y pos
+   * @param player The owner of the king
+   * @param king The king that might be in check
+   * @return Piece* The piece that is checking the king (or nullptr if none)
+   */
+  Piece* discoverDiagB(const int x, const int y, const bool player, Piece* king) noexcept;
 };

@@ -1,3 +1,6 @@
+- Do for each piece the method threat(Piece* piece)
+- Do discovery check for Diag A and Diag B
+
 - Finish run() function to handle real game
 - Construct Game::filterMoves(Piece* piece, vector<vector<int>> moves)
 - Construct Game::updateChecks(Piece* piece, vector<int> move)

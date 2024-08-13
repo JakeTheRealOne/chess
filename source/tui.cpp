@@ -193,6 +193,7 @@ void TUI::clearMoves() noexcept
       update(x, y);
     }
   }
+  update(_x, _y, true); //< Reprint the cursor if it was deleted by the above for loop
 }
 
 

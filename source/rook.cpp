@@ -82,7 +82,40 @@ vector<vector<int>> Rook::read() noexcept
       break;
     }
   }
+  _game->filterMoves(this, _savedMoves);
   return _savedMoves;
+}
+
+
+bool Rook::threat(Piece* piece)
+{
+  if (_x == piece->x())
+  {
+    int lowerBound = _y < piece->y() ? _y + 1 : piece->y() + 1,
+        upperBound = _y < piece->y() ? piece->y() : _y;
+    for (int index = lowerBound; index < upperBound; ++ index)
+    {
+      if (_game->at(_x, index) != nullptr)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  else if (_y == piece->y())
+  {
+    int lowerBound = _x < piece->x() ? _x + 1 : piece->x() + 1,
+    upperBound = _x < piece->x() ? piece->x() : _x;
+    for (int index = lowerBound; index < upperBound; ++ index)
+    {
+      if (_game->at(index, _y) != nullptr)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 

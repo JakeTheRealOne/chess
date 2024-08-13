@@ -62,13 +62,17 @@ Game::Game()
   _board[0][3] = new Queen(1, 3, 0, this);
   _board[7][3] = new Queen(0, 3, 7, this);
 
-  _whiteKing = new King(0, 4, 7, this);
+  // _whiteKing = new King(0, 4, 7, this);
   _blackKing = new King(1, 4, 0, this);
-  _board[7][4] = _whiteKing;
+  // _board[7][4] = _whiteKing;
   _board[0][4] = _blackKing;
 
   // debug:
-  _board[6][3] = new Pawn(1, 3, 6, this);
+  _whiteKing = new King(0, 5, 4, this);
+  _board[4][5] = _whiteKing;
+  _board[4][3] = new Knight(1, 3, 4, this);
+  _board[4][1] = new Rook(1, 1, 4, this);
+
 }
 
 
@@ -76,6 +80,7 @@ Game::Game(string path)
 {
   // COMING SOON
 }
+
 
 Game::~Game()
 {
@@ -162,8 +167,140 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force) noexce
 
 void Game::filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
 {
+  // check for discovery attacks (or puttin itself in check if piece.isKing())
 
+  // 0 check : nothing to do
+
+  // 1 check : The piece has to
+    // - eat if N P R B Q
+    // - block if R B Q
+    // - en passant is piece.isPawn() and pawn
+
+  // 2 check : Only the king can move to fre himself from double check
 }
+
+
+void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
+{
+  _checkList.clear();
+  // Direct check
+  if (piece->threat(king(not piece->player())))
+  {
+    _checkList.push_back(piece);
+  }
+  // Discovery check
+  if (piece->isKing())
+  {
+    return; //< Do not check discovery checks because the king cannot be pinned to itself
+  }
+  Piece* threat = isDiscoveryCheck(x, y,  not piece->player());
+  if (threat != nullptr)
+  {
+    _checkList.push_back(threat);
+  }
+}
+
+
+Piece* Game::discoverRow(const int x, const int y, const bool player, Piece* king) noexcept
+{
+  // Space between (x, y) and king as to be empty
+  int lowerBound = x < king->x() ? x + 1 : king->x() + 1,
+      upperBound = y < king->x() ? king->x() : x;
+  for (int index = lowerBound; index < upperBound; ++ index)
+  {
+    if (_board[y][index] != nullptr)
+    {
+      return nullptr;
+    }
+  }
+  // Return if there is directly a ROOK/QUEEN after (x, y)
+  int increment = x < king->x() ? -1 : +1, index = x + increment;
+  while (0 <= index and index < SIZE)
+  {
+    if (_board[y][index] == nullptr)
+    {
+      index += increment;
+      continue;
+    }
+    else
+    {
+      return (
+        _board[y][index]->player() != player and (_board[y][index]->isRook() or _board[y][index]->isQueen())
+      ) ? _board[y][index] : nullptr;
+    }
+  }
+  return nullptr;
+}
+
+
+Piece* Game::discoverCol(const int x, const int y, const bool player, Piece* king) noexcept
+{
+  // Space between (x, y) and king as to be empty
+  int lowerBound = y < king->y() ? y + 1 : king->y() + 1,
+      upperBound = y < king->y() ? king->y() : y;
+  for (int index = lowerBound; index < upperBound; ++ index)
+  {
+    if (_board[index][x] != nullptr)
+    {
+      return nullptr;
+    }
+  }
+  // Return if there is directly a ROOK/QUEEN after (x, y)
+  int increment = y < king->y() ? -1 : +1, index = y + increment;
+  while (0 <= index and index < SIZE)
+  {
+    if (_board[index][x] == nullptr)
+    {
+      index += increment;
+      continue;
+    }
+    else
+    {
+      return (
+        _board[index][x]->player() != player and (_board[index][x]->isRook() or _board[index][x]->isQueen())
+      ) ? _board[index][x] : nullptr;
+    }
+  }
+  return nullptr;
+}
+
+
+Piece* Game::discoverDiagA(const int x, const int y, const bool player, Piece* king) noexcept
+{
+  // TODO
+  return nullptr;
+}
+
+
+Piece* Game::discoverDiagB(const int x, const int y, const bool player, Piece* king) noexcept
+{
+  // TODO
+  return nullptr;
+}
+
+
+Piece* Game::isDiscoveryCheck(const int x, const int y, const bool player) noexcept
+{
+  Piece* king = this->king(player);
+  if (king->x() == x) // Same col
+  {
+    return discoverCol(x, y, player, king);
+  }
+  else if (king->y() == y) // Same row
+  {
+    return discoverRow(x, y, player, king);
+  }
+  else if (x - y == king->x() - king->y()) // Same diag (Diag A)
+  {
+    return discoverDiagA(x, y, player, king);
+  }
+  else if (x + y == king->x() + king->y()) // Same diag (Diag B)
+  {
+    return discoverDiagB(x, y, player, king);
+  }
+  return nullptr;
+}
+
 
 bool Game::isMate() noexcept
 {
@@ -180,12 +317,6 @@ bool Game::isMate() noexcept
     }
   }
   return true;
-}
-
-
-void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
-{
-
 }
 
 
