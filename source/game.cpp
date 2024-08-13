@@ -193,6 +193,15 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   {
     return; //< Do not check discovery checks because the king cannot be pinned to itself
   }
+  else if (piece->isPawn() and (piece->player() ? 4 : 3) == y and x != piece->x() and _board[y][piece->x()] == nullptr) // En passant
+  {
+    Piece* threat = isDiscoveryCheck(piece->x(), y, not piece->player());
+    if (threat != nullptr)
+    {
+      _checkList.push_back(threat);
+      return;
+    }
+  }
   Piece* threat = isDiscoveryCheck(x, y,  not piece->player());
   if (threat != nullptr)
   {
@@ -267,14 +276,68 @@ Piece* Game::discoverCol(const int x, const int y, const bool player, Piece* kin
 
 Piece* Game::discoverDiagA(const int x, const int y, const bool player, Piece* king) noexcept
 {
-  // TODO
+  // Space between (x, y) and king as to be empty
+  int increment = x < king->x() ? +1 : -1;
+  int currentX = x + increment, currentY = y + increment;
+  while (currentX < king->x())
+  {
+    if (_board[currentY][currentX] != nullptr)
+    {
+      return nullptr;
+    }
+    currentX += increment, currentY += increment;
+  }
+  // Return if there is directly a BISHOP/QUEEN after (x, y)
+  increment = increment == 1 ? -1 : +1;
+  currentX = x + increment, currentY = y + increment;
+  while (0 <= currentX and currentX < SIZE and 0 <= currentY and currentY < SIZE)
+  {
+    if (_board[currentY][currentX] == nullptr)
+    {
+      currentX += increment, currentY += increment;
+      continue;
+    }
+    else
+    {
+      return (
+        _board[currentY][currentX]->player() != player and (_board[currentY][currentX]->isBishop() or _board[currentY][currentX]->isQueen())
+      ) ? _board[currentY][currentX] : nullptr;
+    }
+  }
   return nullptr;
 }
 
 
 Piece* Game::discoverDiagB(const int x, const int y, const bool player, Piece* king) noexcept
 {
-  // TODO
+  // Space between (x, y) and king as to be empty
+  int increment = x < king->x() ? +1 : -1;
+  int currentX = x + increment, currentY = y - increment;
+  while (currentX < king->x())
+  {
+    if (_board[currentY][currentX] != nullptr)
+    {
+      return nullptr;
+    }
+    currentX += increment, currentY -= increment;
+  }
+  // Return if there is directly a BISHOP/QUEEN after (x, y)
+  increment = increment == 1 ? -1 : +1;
+  currentX = x + increment, currentY = y - increment;
+  while (0 <= currentX and currentX < SIZE and 0 <= currentY and currentY < SIZE)
+  {
+    if (_board[currentY][currentX] == nullptr)
+    {
+      currentX += increment, currentY -= increment;
+      continue;
+    }
+    else
+    {
+      return (
+        _board[currentY][currentX]->player() != player and (_board[currentY][currentX]->isBishop() or _board[currentY][currentX]->isQueen())
+      ) ? _board[currentY][currentX] : nullptr;
+    }
+  }
   return nullptr;
 }
 

@@ -79,6 +79,39 @@ vector<vector<int>> Bishop::read() noexcept
 }
 
 
+bool Bishop::threat(Piece* piece){
+  if (_x - _y == piece->x() - piece->y())
+  { // Diag A
+    int increment = _x < piece->x() ? +1 : -1;
+    int currentX = _x + increment, currentY = _y + increment;
+    while (currentX < piece->x())
+    {
+      if (_game->at(currentX, currentY) != nullptr)
+      {
+        return false;
+      }
+      currentX += increment, currentY += increment;
+    }
+    return true;
+  }
+  else if (_x + _y == piece->x() + piece->y())
+  { // Diag B
+    int increment = _x < piece->x() ? +1 : -1;
+    int currentX = _x + increment, currentY = _y - increment;
+    while (currentX < piece->x())
+    {
+      if (_game->at(currentX, currentY) != nullptr)
+      {
+        return false;
+      }
+      currentX += increment, currentY -= increment;
+    }
+    return true;
+  }
+  return false;
+}
+
+
 ostream& operator<<(ostream& stream, const Bishop& me)
 {
   stream << "Bishop(" << (me._player ? "black" : "white")

@@ -1,5 +1,12 @@
+- Add en passant support to Game::discoveryCheck
 - Do for each piece the method threat(Piece* piece)
-- Do discovery check for Diag A and Diag B
+  V Knight
+  V Rook
+  V Bishop
+  . Queen (working)
+  X King
+  X Pawn
+
 
 - Finish run() function to handle real game
 - Construct Game::filterMoves(Piece* piece, vector<vector<int>> moves)
