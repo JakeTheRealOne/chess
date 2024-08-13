@@ -149,7 +149,7 @@ public:
    * @param player The owner of the king 
    * @return Piece* The threat (if there is none, nullptr)
    */
-  Piece* isDiscoveryCheck(const int x, const int y, const bool player) noexcept;
+  Piece* isDiscoveryCheck(const int x, const int y, const bool player) const noexcept;
 
   /**
    * @brief Promote a chess piece
@@ -160,6 +160,14 @@ public:
    * @return The pointer of the new piece (after promotion)
    */
   Piece* promote(Piece* piece, int promotion);
+
+  /**
+   * @brief To remove all moves that are illegal from moves of a piece
+   * 
+   * @param moves The list of moves given
+   * @param piece The piece that want to move
+   */
+  void filterMoves(vector<vector<int>>& moves, Piece* piece) noexcept;
 
   // #### Operators: ####
 
@@ -191,14 +199,6 @@ private:
   // #### Auxiliary methods: ####
 
   /**
-   * @brief To remove all moves that are illegal from moves of a piece
-   * 
-   * @param moves The list of moves given
-   * @param piece The piece that want to move
-   */
-  void filterMoves(vector<vector<int>>& moves, Piece* piece);
-
-  /**
    * @brief Helper for isDiscoveryCheck, check for possible threat on the same row as the king
    * 
    * @param x The X pos
@@ -207,7 +207,7 @@ private:
    * @param king The king that might be in check
    * @return Piece* The piece that is checking the king (or nullptr if none)
    */
-  Piece* discoverRow(const int x, const int y, const bool player, Piece* king) noexcept;
+  Piece* discoverRow(const int x, const int y, const bool player, Piece* king) const noexcept;
 
   /**
    * @brief Helper for isDiscoveryCheck, check for possible threat on the same column as the king
@@ -218,7 +218,7 @@ private:
    * @param king The king that might be in check
    * @return Piece* The piece that is checking the king (or nullptr if none)
    */
-  Piece* discoverCol(const int x, const int y, const bool player, Piece* king) noexcept;
+  Piece* discoverCol(const int x, const int y, const bool player, Piece* king) const noexcept;
 
   /**
    * @brief Helper for isDiscoveryCheck, check for possible threat on the same diagonal (A) as the king
@@ -229,7 +229,7 @@ private:
    * @param king The king that might be in check
    * @return Piece* The piece that is checking the king (or nullptr if none)
    */
-  Piece* discoverDiagA(const int x, const int y, const bool player, Piece* king) noexcept;
+  Piece* discoverDiagA(const int x, const int y, const bool player, Piece* king) const noexcept;
 
   /**
    * @brief Helper for isDiscoveryCheck, check for possible threat on the same diagonal (B) as the king
@@ -240,5 +240,21 @@ private:
    * @param king The king that might be in check
    * @return Piece* The piece that is checking the king (or nullptr if none)
    */
-  Piece* discoverDiagB(const int x, const int y, const bool player, Piece* king) noexcept;
+  Piece* discoverDiagB(const int x, const int y, const bool player, Piece* king) const noexcept;
+
+  /**
+   * @brief Helper for filterMoves, erase illegals moves for piece, the king
+   * 
+   * @param piece The king
+   * @param moves The moves of the king (vector of pos {x, y})
+   */
+  void filterKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept;
+
+  /**
+   * @brief Helper for filterMoves, erase illegals moves for piece, that is not the king
+   * 
+   * @param piece The involved chess piece
+   * @param moves The moves of the king (vector of pos {x, y})
+   */
+  void filterNotKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept;
 };

@@ -165,18 +165,79 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force) noexce
 }
 
 
-void Game::filterMoves(Piece* piece, vector<vector<int>>& moves) const noexcept
+void Game::filterMoves(vector<vector<int>>& moves, Piece* piece) noexcept
 {
-  // check for discovery attacks (or puttin itself in check if piece.isKing())
+  /*
+  If K:
+    -> Accept all the moves that resolve current checks in checkList
+    -> & That does not put the K in danger
+  Else:
+    -> Refuse all moves if checkList.size() > 1
+    -> Accept all the moves that eat the possible current check
+    -> | block the possible current check (if check is Q B R)
+    -> & does not discover a check
+  */
+  if (piece->isKing())
+  {
+    filterKingMoves(piece, moves);
+  }
+  else
+  {
+    filterNotKingMoves(piece, moves);
+  }
+}
 
-  // 0 check : nothing to do
 
-  // 1 check : The piece has to
-    // - eat if N P R B Q
-    // - block if R B Q
-    // - en passant is piece.isPawn() and pawn
+void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept
+{
 
-  // 2 check : Only the king can move to fre himself from double check
+}
+
+
+void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept
+{
+  if (_checkList.size() > 1)
+  {
+    moves.clear();
+    return;
+  }
+  int x = piece->x(), y = piece->y(), moveX, moveY;
+  Piece* myKing = king(piece->player());
+  if (_checkList.size())
+  {
+    Piece *threat = _checkList[0], *pinned = isDiscoveryCheck(x, y, piece->player());
+    bool canBeStopped = threat->isBishop() or threat->isRook() or threat->isQueen();
+    if (pinned != nullptr)
+    {
+      moves.clear();
+      return;
+    }
+    for (auto move = moves.begin(); move != moves.end(); ++ move)
+    {
+      moveX = (*move)[0], moveY = (*move)[1];
+      if (moveX == threat->x() and moveY == threat->y())
+      { // eat
+        continue;
+      }
+      if (canBeStopped)
+      {
+        _board[moveY][moveX] = piece;
+        _board[y][x] = nullptr;
+        piece->move(moveX, moveY);
+        bool threatBlocked = not threat->threat(myKing);
+        _board[moveY][moveX] = nullptr;
+        _board[y][x] = piece;
+        piece->move(x, y);
+        if (threatBlocked)
+        {
+          continue;
+        }
+      }
+
+      iter_swap(move, moves.end() - 1);
+      moves.pop_back();
+    }
+  }
 }
 
 
@@ -186,7 +247,7 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   // Direct check
   if (piece->threat(king(not piece->player())))
   {
-    mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str());
+    // mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str()); DEBUG
     _checkList.push_back(piece);
   }
   // Discovery check
@@ -200,19 +261,19 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
     if (threat != nullptr)
     {
       _checkList.push_back(threat);
-      return;
+      return; // En passant cannot discover 2 different checks
     }
   }
   Piece* threat = isDiscoveryCheck(x, y,  not piece->player());
   if (threat != nullptr)
   {
-    mvprintw(3, 0, "DISCOVERY THREAT %s", string(1, threat->repr()).c_str());
+    // mvprintw(3, 0, "DISCOVERY THREAT %s", string(1, threat->repr()).c_str()); DEBUG
     _checkList.push_back(threat);
   }
 }
 
 
-Piece* Game::discoverRow(const int x, const int y, const bool player, Piece* king) noexcept
+Piece* Game::discoverRow(const int x, const int y, const bool player, Piece* king) const noexcept
 {
   // Space between (x, y) and king as to be empty
   int lowerBound = x < king->x() ? x + 1 : king->x() + 1,
@@ -244,7 +305,7 @@ Piece* Game::discoverRow(const int x, const int y, const bool player, Piece* kin
 }
 
 
-Piece* Game::discoverCol(const int x, const int y, const bool player, Piece* king) noexcept
+Piece* Game::discoverCol(const int x, const int y, const bool player, Piece* king) const noexcept
 {
   // Space between (x, y) and king as to be empty
   int lowerBound = y < king->y() ? y + 1 : king->y() + 1,
@@ -276,7 +337,7 @@ Piece* Game::discoverCol(const int x, const int y, const bool player, Piece* kin
 }
 
 
-Piece* Game::discoverDiagA(const int x, const int y, const bool player, Piece* king) noexcept
+Piece* Game::discoverDiagA(const int x, const int y, const bool player, Piece* king) const noexcept
 {
   // Space between (x, y) and king as to be empty
   int increment = x < king->x() ? +1 : -1;
@@ -310,7 +371,7 @@ Piece* Game::discoverDiagA(const int x, const int y, const bool player, Piece* k
 }
 
 
-Piece* Game::discoverDiagB(const int x, const int y, const bool player, Piece* king) noexcept
+Piece* Game::discoverDiagB(const int x, const int y, const bool player, Piece* king) const noexcept
 {
   // Space between (x, y) and king as to be empty
   int increment = x < king->x() ? +1 : -1;
@@ -344,7 +405,7 @@ Piece* Game::discoverDiagB(const int x, const int y, const bool player, Piece* k
 }
 
 
-Piece* Game::isDiscoveryCheck(const int x, const int y, const bool player) noexcept
+Piece* Game::isDiscoveryCheck(const int x, const int y, const bool player) const noexcept
 {
   Piece* king = this->king(player);
   if (king->x() == x) // Same col
