@@ -23,4 +23,4 @@ all:
 	$(COMPILE) -c source/game.cpp -o object/game.o
 	$(COMPILE) -c source/getkey.cpp -o object/getkey.o
 	$(COMPILE) -c source/tui.cpp -o object/tui.o
-	$(COMPILE) object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/game.o object/getkey.o object/tui.o source/main.cpp -o output $(NCURSES_FLAGS)
+	$(COMPILE) object/game.o object/piece.o object/knight.o object/pawn.o object/queen.o object/bishop.o object/rook.o object/king.o object/getkey.o object/tui.o source/main.cpp -o output $(NCURSES_FLAGS)

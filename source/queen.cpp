@@ -141,7 +141,7 @@ bool Queen::threat(Piece* piece)
   { // Diag A
     int increment = _x < piece->x() ? +1 : -1;
     int currentX = _x + increment, currentY = _y + increment;
-    while (currentX < piece->x())
+    while (currentX != piece->x())
     {
       if (_game->at(currentX, currentY) != nullptr)
       {
@@ -153,9 +153,9 @@ bool Queen::threat(Piece* piece)
   }
   else if (_x + _y == piece->x() + piece->y())
   { // Diag B
-    int increment = _x < piece->x() ? +1 : -1;
+    int increment = _x < piece->x() ? -1 : +1;
     int currentX = _x + increment, currentY = _y - increment;
-    while (currentX < piece->x())
+    while (currentX != piece->x())
     {
       if (_game->at(currentX, currentY) != nullptr)
       {

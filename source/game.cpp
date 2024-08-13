@@ -70,7 +70,7 @@ Game::Game()
   // debug:
   _whiteKing = new King(0, 5, 4, this);
   _board[4][5] = _whiteKing;
-  _board[4][3] = new Knight(1, 3, 4, this);
+  _board[4][3] = new Knight(0, 3, 4, this);
   _board[4][1] = new Rook(1, 1, 4, this);
 
 }
@@ -165,7 +165,7 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force) noexce
 }
 
 
-void Game::filterMoves(vector<vector<int>>& moves, Piece* piece) noexcept
+void Game::filterMoves(Piece* piece, vector<vector<int>>& moves)
 {
   /*
   If K:
@@ -188,54 +188,49 @@ void Game::filterMoves(vector<vector<int>>& moves, Piece* piece) noexcept
 }
 
 
-void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept
+void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves)
 {
 
 }
 
 
-void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves) noexcept
+void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
 {
-  if (_checkList.size() > 1)
+  if (_checkList.size() > 1) // double check cannot be stopped by non-king pieces
   {
     moves.clear();
     return;
   }
-  int x = piece->x(), y = piece->y(), moveX, moveY;
-  Piece* myKing = king(piece->player());
-  if (_checkList.size())
+  if (_checkList.size()) // single check: has to be stopped
   {
-    Piece *threat = _checkList[0], *pinned = isDiscoveryCheck(x, y, piece->player());
-    bool canBeStopped = threat->isBishop() or threat->isRook() or threat->isQueen();
-    if (pinned != nullptr)
+    Piece* threat = _checkList[0], * myKing = king(piece->player());
+    bool canBeBlocked = threat->isRook() or threat->isBishop() or threat->isQueen();
+    int x = piece->x(), y = piece->y(), moveX, moveY, n = moves.size();
+    for (int i = 0; i < n; ++ i)
     {
-      moves.clear();
-      return;
-    }
-    for (auto move = moves.begin(); move != moves.end(); ++ move)
-    {
-      moveX = (*move)[0], moveY = (*move)[1];
+      moveX = moves[i][0], moveY = moves[i][1];
       if (moveX == threat->x() and moveY == threat->y())
-      { // eat
+      {
         continue;
       }
-      if (canBeStopped)
+      if (canBeBlocked and _board[moveY][moveX] == nullptr)
       {
         _board[moveY][moveX] = piece;
         _board[y][x] = nullptr;
         piece->move(moveX, moveY);
-        bool threatBlocked = not threat->threat(myKing);
+        bool blocked = not threat->threat(myKing);
         _board[moveY][moveX] = nullptr;
         _board[y][x] = piece;
         piece->move(x, y);
-        if (threatBlocked)
+        if (blocked)
         {
           continue;
         }
       }
-
-      iter_swap(move, moves.end() - 1);
+      swap(moves[i], moves.back());
       moves.pop_back();
+      -- n;
+      -- i;
     }
   }
 }
@@ -247,7 +242,7 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   // Direct check
   if (piece->threat(king(not piece->player())))
   {
-    // mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str()); DEBUG
+    // mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str()); // DEBUG
     _checkList.push_back(piece);
   }
   // Discovery check
@@ -267,7 +262,7 @@ void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
   Piece* threat = isDiscoveryCheck(x, y,  not piece->player());
   if (threat != nullptr)
   {
-    // mvprintw(3, 0, "DISCOVERY THREAT %s", string(1, threat->repr()).c_str()); DEBUG
+    // mvprintw(3, 0, "DISCOVERY THREAT %s", string(1, threat->repr()).c_str()); // DEBUG
     _checkList.push_back(threat);
   }
 }

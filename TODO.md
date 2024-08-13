@@ -1,12 +1,4 @@
-- Add en passant support to Game::discoveryCheck
-- Do for each piece the method threat(Piece* piece)
-  V Knight
-  V Rook
-  V Bishop
-  . Queen (working)
-  X King
-  X Pawn
-
+- Add En passant in filterMoves
 
 - Finish run() function to handle real game
 - Construct Game::filterMoves(Piece* piece, vector<vector<int>> moves)
