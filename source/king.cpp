@@ -78,7 +78,7 @@ vector<vector<int>> King::read() noexcept
 bool King::threat(Piece* piece)
 {
   int diffX = abs(_x - piece->x()), diffY = abs(_y - piece->y());
-  return diffX == 1 or diffY == 1;
+  return diffX < 2 and diffY < 2 and (diffX or diffY);
 }
 
 

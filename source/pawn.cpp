@@ -120,6 +120,12 @@ vector<vector<int>> Pawn::read() noexcept
 }
 
 
+bool Pawn::threat(Piece* piece)
+{
+  int diffX = abs(_x - piece->x()), diffY = _y - piece->y();
+  return diffX == 1 and (_player ? -1 : +1) == diffY;
+}
+
 ostream& operator<<(ostream& stream, const Pawn& me)
 {
   stream << "Pawn(" << (me._player ? "black" : "white")

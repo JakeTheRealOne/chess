@@ -92,6 +92,15 @@ public:
    */
   vector<vector<int>> read() noexcept override;
 
+  /**
+   * @brief Return if the pawn threatens another piece
+   * @note Since this method is primarely used for checks, it does not support En passant
+   *
+   * @param piece The target piece
+   * @return bool
+   */
+  bool threat(Piece* piece) override;
+
   // #### Operator: ####
 
   /**
