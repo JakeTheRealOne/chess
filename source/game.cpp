@@ -202,7 +202,7 @@ void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves)
     moveX = moves[i][0], moveY = moves[i][1];
     previous = _board[moveY][moveX];
     _board[moveY][moveX] = piece;
-    _board[y][x] = previous;
+    _board[y][x] = nullptr;
     piece->move(moveX, moveY);
     bool notSafe = knightNear(piece) or rookAndQueenNear(piece) or bishopAndQueenNear(piece) or pawnNear(piece) or kingNear(piece);
     _board[moveY][moveX] = previous;
@@ -559,10 +559,55 @@ bool Game::knightNear(Piece* piece)
   return false;
 }
 
-
 bool Game::rookAndQueenNear(Piece* piece)
 {
-  return false; // TODO
+  bool output = false;
+  int x = piece->x(), y = piece->y();
+  if (not output and x)
+  {
+    if (_board[y][x - 1] != nullptr)
+    {
+      output = (_board[y][x - 1]->player() xor piece->player()) and (_board[y][x - 1]->isRook() or _board[y][x - 1]->isQueen());
+    }
+    else
+    {
+      output = discoverRow(x - 1, y, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and y)
+  {
+    if (_board[y - 1][x] != nullptr)
+    {
+      output = (_board[y - 1][x]->player() xor piece->player()) and (_board[y - 1][x]->isRook() or _board[y - 1][x]->isQueen());
+    }
+    else
+    {
+      output = discoverCol(x, y - 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and x < SIZE - 1)
+  {
+    if (_board[y][x + 1] != nullptr)
+    {
+      output = (_board[y][x + 1]->player() xor piece->player()) and (_board[y][x + 1]->isRook() or _board[y][x + 1]->isQueen());
+    }
+    else
+    {
+      output = discoverRow(x + 1, y, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and y < SIZE - 1)
+  {
+    if (_board[y + 1][x] != nullptr)
+    {
+      output = (_board[y + 1][x]->player() xor piece->player()) and (_board[y + 1][x]->isRook() or _board[y + 1][x]->isQueen());
+    }
+    else
+    {
+      output = discoverCol(x, y + 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  return output;
 }
 
 
@@ -574,11 +619,20 @@ bool Game::bishopAndQueenNear(Piece* piece)
 
 bool Game::pawnNear(Piece* piece)
 {
-  return false; // TODO
+  int pawnY = piece->y() + (piece->player() ? +1 : -1);
+  Piece* spot1 = at(piece->x() + 1, pawnY),
+       * spot2 = at(piece->x() - 1, pawnY);
+  return (
+    (spot1 != nullptr and spot1->player() != piece->player() and spot1->isPawn())
+    or
+    (spot2 != nullptr and spot2->player() != piece->player() and spot2->isPawn())
+  );
 }
 
 
 bool Game::kingNear(Piece* piece)
 {
-  return false; // TODO
+  Piece* otherKing = king(not piece->player());
+  int diffX = abs(otherKing->x() - piece->x()), diffY = abs(otherKing->y() - piece->y());
+  return (diffX < 2 and diffY < 2 and (diffX or diffY));
 }
