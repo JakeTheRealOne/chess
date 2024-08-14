@@ -1,3 +1,2 @@
 - Add Roque
-- Add draw by repetition
-- Remember theme and controls
+- Add Load game

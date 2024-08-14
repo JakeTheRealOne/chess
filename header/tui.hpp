@@ -37,7 +37,7 @@ class TUI
 public:
   // #### Public attributes: ####
   const vector<string> PROMOTION_OPTIONS = {"  Queen         ", "  Rook          ", "  Bishop        ", "  Knight        "};
-  const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "    Controls    "};
+  const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "      Quit      "};
   const vector<string> LOGO = {"       _                   ", "   ___| |__   ___  ___ ___ ", "  / __| '_ \\ / _ \\/ __/ __|", " | (__| | | |  __/\\__ \\__ \\", "  \\___|_| |_|\\___||___/___/"};
   const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5, THEMES = 4;
 

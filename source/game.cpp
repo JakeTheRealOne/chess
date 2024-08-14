@@ -86,7 +86,6 @@ Game::Game(string path)
 
 Game::~Game()
 {
-  int count = 0; //< for debug
   for (const vector<Piece*>& row : _board)
   {
     for (const Piece* piece : row)
@@ -94,11 +93,9 @@ Game::~Game()
       if (piece != nullptr)
       {
         delete piece;
-        ++ count;
       }
     }
   }
-  cout << "[DBG] " << count << " piece.s deleted" << endl;
 }
 
 

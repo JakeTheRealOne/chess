@@ -112,9 +112,12 @@ void TUI::initColors() noexcept
   init_color(54, 416, 400, 380);
   init_pair(54, -1, 54);
 
+  // Cursor color
+  init_color(37, 647, 78, 212);
+  init_color(38, 267, 78, 647);
+
   readTheme();
 
-  init_color(COLOR_RED, 933, 360, 349);
   init_pair(1, COLOR_RED, COLOR_WHITE); // Cursor color
   init_pair(2, COLOR_RED, COLOR_BLUE);
 
@@ -486,11 +489,13 @@ int TUI::readTheme() const
   char theme;
   file.read(&theme, sizeof(theme));
   int pos = (theme) << 1;
-  short r1, g1, b1, r2, g2, b2;
+  short r1, g1, b1, r2, g2, b2, r3, g3, b3;
   color_content(47 + pos, &r1, &g1, &b1);
   color_content(48 + pos, &r2, &g2, &b2);
+  color_content(37 + (not theme or theme == 3), &r3, &g3, &b3);
   init_color(COLOR_WHITE, r1, g1, b1);
   init_color(COLOR_BLUE, r2, g2, b2);
+  init_color(COLOR_RED, r3, g3, b3);
   file.close();
   return 0;
 }
