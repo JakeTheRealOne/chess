@@ -64,16 +64,16 @@ Game::Game()
   _board[0][3] = new Queen(1, 3, 0, this);
   _board[7][3] = new Queen(0, 3, 7, this);
 
-  // _whiteKing = new King(0, 4, 7, this);
+  _whiteKing = new King(0, 4, 7, this);
   _blackKing = new King(1, 4, 0, this);
-  // _board[7][4] = _whiteKing;
+  _board[7][4] = _whiteKing;
   _board[0][4] = _blackKing;
 
   // debug:
-  _whiteKing = new King(0, 5, 4, this);
+  /*_whiteKing = new King(0, 5, 4, this);
   _board[4][5] = _whiteKing;
   _board[4][3] = new Knight(0, 3, 4, this);
-  _board[4][1] = new Rook(1, 1, 4, this);
+  _board[4][1] = new Rook(1, 1, 4, this);*/
 
 }
 

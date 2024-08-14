@@ -93,9 +93,33 @@ void TUI::initColors() noexcept
   init_color(COLOR_BLUE, 450, 290, 184);
   */
 
-  // HIKARU THEME:
-  init_color(COLOR_WHITE, 1000, 1000, 1000);
-  init_color(COLOR_BLUE, 615, 764, 878);
+  // Themes
+  init_color(47, 823, 705, 549); // Classic
+  init_pair(47, -1, 47);
+  init_color(48, 450, 290, 184);
+  init_pair(48, -1, 48);
+  init_color(49, 1000, 1000, 1000); // Glass
+  init_pair(49, -1, 49);
+  init_color(50, 615, 764, 878);
+  init_pair(50, -1, 50);
+  init_color(51, 910, 902, 882); // Tournament
+  init_pair(51, -1, 51);
+  init_color(52, 188, 384, 275);
+  init_pair(52, -1, 52);
+  init_color(53, 769, 737, 651);
+  init_pair(53, -1, 53);
+  init_color(54, 416, 400, 380);
+  init_pair(54, -1, 54);
+
+  // Default theme:
+  //> temporary
+  short r1, g1, b1, r2, g2, b2;
+  color_content(49, &r1, &g1, &b1);
+  color_content(50, &r2, &g2, &b2);
+  init_color(COLOR_WHITE, r1, g1, b1);
+  init_color(COLOR_BLUE, r2, g2, b2);
+
+
 
   init_color(COLOR_RED, 933, 360, 349);
   init_pair(1, COLOR_RED, COLOR_WHITE); // Cursor color
@@ -231,12 +255,14 @@ void TUI::showHelp(const short type) const noexcept
 
 void TUI::showLogo() const noexcept
 {
+  attron(COLOR_PAIR(10));
   int yOffset = _yOffset - LOGO_HEIGHT - 1, xOffset = _xOffset - ((LOGO_WIDTH - (_game->SIZE << 1)) >> 1) - 1, rowIndex = 0;
   for (const string& row : LOGO)
   {
     mvprintw(yOffset + rowIndex, xOffset, "%s", row.c_str());
     ++ rowIndex;
   }
+  attroff(COLOR_PAIR(10));
 }
 
 
@@ -254,14 +280,48 @@ void TUI::showMenu() const noexcept
 }
 
 
+void TUI::showThemes() const noexcept
+{
+  clear();
+  showLogo();
+
+  int offset = _xOffset - 1, row = 0, col = 0;
+  for (int index = 0; index < THEMES; ++ index)
+  {
+    short theme = 47 + (index << 1);
+    attron(COLOR_PAIR(theme + 1));
+    mvprintw(_yOffset + (row << 2), offset + 2 + (col * 5), "  ");
+    mvprintw(_yOffset + 1 + (row << 2), offset + (col * 5), "  ");
+    attroff(COLOR_PAIR(theme + 1));
+
+    attron(COLOR_PAIR(theme));
+    mvprintw(_yOffset + (row << 2), offset + (col * 5), "  ");
+    mvprintw(_yOffset + 1 + (row << 2), offset + 2 + (col * 5), "  ");
+    attroff(COLOR_PAIR(theme));
+    ++ col;
+    if (col == 4)
+    {
+      ++ row;
+      col = 0;
+    }
+  }
+  // Display selector:
+  attron(COLOR_PAIR(9));
+  mvprintw(_yOffset + 2, offset, "    ");
+  attroff(COLOR_PAIR(9));
+}
+
+
 void TUI::showMessage(const string& message) const noexcept
 {
   if (message.size() > 16 or _yOffset <= 0 or _xOffset < 0)
   {
     return; // Too long
   }
+  attron(COLOR_PAIR(10));
   mvprintw(_yOffset - 1, _xOffset, "%s", message.c_str());
   mvprintw(_yOffset - 1, _xOffset + message.size(), "%s", string(16 - message.size(), ' ').c_str());
+  attroff(COLOR_PAIR(10));
 }
 
 
@@ -353,6 +413,43 @@ int TUI::changeMenu(int index, int increment) const noexcept
   attroff(COLOR_PAIR(9));
 
   return index;
+}
+
+
+int TUI::getTheme() const noexcept
+{
+  int input, menuIndex = 0;
+  showThemes();
+  do
+  {
+    input = getkey();
+    if (input > 1 and input < 6)
+    {
+      menuIndex = changeTheme(menuIndex, input % 2 ? 1 : -1, input > 3);
+    }
+  }
+  while (input and input != 1);
+  mvprintw(0, 0, "output: %d", (bool)input * (menuIndex + 1));
+  getch();
+  return (bool)input * (menuIndex + 1); // TODO
+}
+
+
+int TUI::changeTheme(int index, int increment, bool orientation) const noexcept
+{
+  int newIndex = index + (orientation ? 1 : 4 ) * increment, offset = _xOffset - 1;
+  if (0 <= newIndex and newIndex < THEMES)
+  {
+    mvprintw(_yOffset + 2 + (index / 4), offset + ((index % 4) * 5), "    ");
+    attron(COLOR_PAIR(9));
+    mvprintw(_yOffset + 2 + (newIndex / 4), offset + ((newIndex % 4) * 5), "    ");
+    attroff(COLOR_PAIR(9));
+    return newIndex;
+  }
+  else
+  {
+    return index;
+  }
 }
 
 

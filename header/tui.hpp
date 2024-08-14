@@ -39,7 +39,7 @@ public:
   const vector<string> PROMOTION_OPTIONS = {"  Queen         ", "  Rook          ", "  Bishop        ", "  Knight        "};
   const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "    Controls    "};
   const vector<string> LOGO = {"       _                   ", "   ___| |__   ___  ___ ___ ", "  / __| '_ \\ / _ \\/ __/ __|", " | (__| | | |  __/\\__ \\__ \\", "  \\___|_| |_|\\___||___/___/"};
-  const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5;
+  const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5, THEMES = 4;
 
   // #### Constructors: ####
 
@@ -149,6 +149,12 @@ public:
   void showMenu() const noexcept;
 
   /**
+   * @brief Display the theme menu
+   * 
+   */
+  void showThemes() const noexcept; 
+
+  /**
    * @brief Show the moves of the chess piece at pos (x, y)
    * 
    * @param x The X pos of the chess piece
@@ -227,6 +233,26 @@ public:
    * @return int The updated index
    */
   int changeMenu(int index, int increment) const noexcept;
+
+  /**
+   * @brief Get an option in the menu (ask to user)
+   * 
+   * @return int A magic value between 0 and 4
+   *  - 0: Abort (Do not change the theme)
+   *  - 1: Classic
+   *  - 2: Glass
+   */
+  int getTheme() const noexcept;
+
+  /**
+   * @brief Change the index of the current selected theme
+   * 
+   * @param index The current index
+   * @param increment The increment
+   * @param orientation The orientation of the increment (0 = vertical, 1 = horizontal)
+   * @return int The updated index
+   */
+  int changeTheme(int index, int increment, bool orientation) const noexcept;
 
 private:
   // #### Attributes: ####

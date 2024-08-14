@@ -99,6 +99,7 @@ void run(Game& game, TUI& tui)
 
 int newGame(TUI& tui, Game& game)
 {
+  clear();
   bool endOfGame = false;
   tui.show();
   while (not endOfGame)
@@ -119,6 +120,22 @@ int newGame(TUI& tui, Game& game)
   return 0;
 }
 
+
+void reapplyColors(int signature)
+{
+  if (not signature)
+  {
+    return;
+  }
+  int pos = (signature - 1) << 1;
+  short r1, g1, b1, r2, g2, b2;
+  color_content(47 + pos, &r1, &g1, &b1);
+  color_content(48 + pos, &r2, &g2, &b2);
+  init_color(COLOR_WHITE, r1, g1, b1);
+  init_color(COLOR_BLUE, r2, g2, b2);
+}
+
+
 int menu()
 {
   Game game;
@@ -131,8 +148,10 @@ int menu()
       case 0:
         return 0;
       case 1:
-        clear();
         newGame(tui, game);
+        break;
+      case 3:
+        reapplyColors(tui.getTheme());
         break;
       default:
         throw runtime_error("comming soon");
