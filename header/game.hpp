@@ -251,6 +251,14 @@ private:
   void filterNotKingMoves(Piece* piece, vector<vector<int>>& moves);
 
   /**
+   * @brief Helper for filterMoves, check if En Passant is in moves, and erase it if illegal
+   * 
+   * @param pawn The pawn 
+   * @param moves The moves of the pawn
+   */
+  void filterEnPassant(Piece* pawn, vector<vector<int>>& moves);
+
+  /**
    * @brief Helper for filterKingMoves, return if a knight is near the king
    * 
    * @param piece The involved king

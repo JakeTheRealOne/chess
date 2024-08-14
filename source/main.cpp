@@ -133,6 +133,7 @@ int menu()
       case 1:
         clear();
         newGame(tui, game);
+        break;
       default:
         throw runtime_error("comming soon");
     }

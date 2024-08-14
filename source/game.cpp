@@ -189,6 +189,10 @@ void Game::filterMoves(Piece* piece, vector<vector<int>>& moves)
   else
   {
     filterNotKingMoves(piece, moves);
+    if (piece->isPawn() and piece->y() == (piece->player() ? 4 : 3))
+    {
+      filterEnPassant(piece, moves);
+    }
   }
 }
 
@@ -219,7 +223,6 @@ void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves)
 }
 
 
-
 void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
 {
   if (_checkList.size() > 1) // double check cannot be stopped by non-king pieces
@@ -236,10 +239,16 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
     for (int i = 0; i < n; ++ i)
     {
       moveX = moves[i][0], moveY = moves[i][1];
-      if (moveX == threat->x() and moveY == threat->y())
+      if (
+        moveX == threat->x() and moveY == threat->y()
+        or
+        (piece->isPawn() and moveX != x and _board[moveY][moveX] == nullptr
+        and threat->isPawn() and threat->x() == moveX and threat->y() == y)
+      )
       {
         continue;
       }
+
       if (canBeBlocked and _board[moveY][moveX] == nullptr)
       {
         _board[moveY][moveX] = piece;
@@ -261,7 +270,7 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
     }
   }
   // Check if the piece is pinned & remove moves that leave the restricted area of pin (I know what Im talking about)
-  Piece* pinned = isDiscoveryCheck(piece->x(), piece->y(), piece->player());
+  Piece* pinned = isDiscoveryCheck(x, y, piece->player());
   if (pinned != nullptr)
   {
     for (int i = 0; i < n; ++ i)
@@ -288,11 +297,31 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
       swap(moves[i], moves.back());
       moves.pop_back();
       -- n;
-      -- i;   
-    } 
+      -- i;
+    }
   }
 }
 
+
+void Game::filterEnPassant(Piece* pawn, vector<vector<int>>& moves)
+{
+  // En passant
+  int x = pawn->x(), y = pawn->y(), moveX, moveY, n = moves.size();
+  for (int i = 0; i < n; ++ i)
+  {
+    if (moveX != x and _board[moveY][moveX] == nullptr)
+    {
+      bool notBlocked = isDiscoveryCheck(moveX, moveY, pawn->player());
+      if (notBlocked)
+      {
+        swap(moves[i], moves.back());
+        moves.pop_back();
+        -- n;
+        -- i;
+      }
+    }
+  }
+}
 
 void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
 {
@@ -559,6 +588,7 @@ bool Game::knightNear(Piece* piece)
   return false;
 }
 
+
 bool Game::rookAndQueenNear(Piece* piece)
 {
   bool output = false;
@@ -613,7 +643,53 @@ bool Game::rookAndQueenNear(Piece* piece)
 
 bool Game::bishopAndQueenNear(Piece* piece)
 {
-  return false; // TODO
+  bool output = false;
+  int x = piece->x(), y = piece->y();
+  if (not output and x and y)
+  {
+    if (_board[y - 1][x - 1] != nullptr)
+    {
+      output = (_board[y - 1][x - 1]->player() xor piece->player()) and (_board[y - 1][x - 1]->isRook() or _board[y - 1][x - 1]->isQueen());
+    }
+    else
+    {
+      output = discoverDiagA(x - 1, y - 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and y < SIZE - 1 and x < SIZE - 1)
+  {
+    if (_board[y + 1][x + 1] != nullptr)
+    {
+      output = (_board[y + 1][x + 1]->player() xor piece->player()) and (_board[y + 1][x + 1]->isRook() or _board[y + 1][x + 1]->isQueen());
+    }
+    else
+    {
+      output = discoverDiagA(x + 1, y + 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and x and y < SIZE - 1)
+  {
+    if (_board[y + 1][x - 1] != nullptr)
+    {
+      output = (_board[y + 1][x - 1]->player() xor piece->player()) and (_board[y + 1][x - 1]->isRook() or _board[y + 1][x - 1]->isQueen());
+    }
+    else
+    {
+      output = discoverDiagB(x - 1, y + 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  if (not output and x < SIZE - 1 and y)
+  {
+    if (_board[y - 1][x + 1] != nullptr)
+    {
+      output = (_board[y - 1][x + 1]->player() xor piece->player()) and (_board[y - 1][x + 1]->isRook() or _board[y - 1][x + 1]->isQueen());
+    }
+    else
+    {
+      output = discoverDiagB(x + 1, y - 1, piece->player(), king(piece->player())) != nullptr;
+    }
+  }
+  return output;
 }
 
 
