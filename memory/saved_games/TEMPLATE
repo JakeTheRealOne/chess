@@ -1,0 +1,14 @@
+byte I/O:
+
+2 bytes: Number of moves
+1 byte: Player to play
+
+between 128 and 192 bytes: for each board case, 
+  1 byte: piece signature (0 = None, 1 = Pawn, 2 = Rook etc.)
+  1 byte: owner of the piece
+  1 byte: (if is Pawn) doubleUp index
+
+1 byte: n of current check (0 1 or 2) 
+  n * 2 bytes:
+  - 1 byte: pos X of the threat
+  - 1 byte: pos Y of the threat

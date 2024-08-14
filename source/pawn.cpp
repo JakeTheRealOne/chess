@@ -43,7 +43,7 @@ bool Pawn::isPawn() const noexcept
 
 bool Pawn::didntMove() const noexcept
 {
-  return _didntMove;
+  return _doubleUp == -1;
 }
 
 int Pawn::doubleUpIndex() const noexcept
@@ -57,7 +57,10 @@ void Pawn::move(const int x, const int y) noexcept
   {
     _doubleUp = _game->index(); //< Register double up index for En passant
   }
-  _didntMove = false;
+  else if (didntMove())
+  {
+    _doubleUp = -2;
+  }
   _x = x;
   _y = y;
 }
@@ -85,7 +88,7 @@ vector<vector<int>> Pawn::read() noexcept
   {
     _savedMoves.push_back({_x, offsetY});
     _player ? ++ offsetY : -- offsetY;
-    if (_didntMove and offsetY >= 0 and offsetY < size and _game->at(_x, offsetY) == nullptr)
+    if (didntMove() and offsetY >= 0 and offsetY < size and _game->at(_x, offsetY) == nullptr)
     {
       _savedMoves.push_back({_x, offsetY});   
     }

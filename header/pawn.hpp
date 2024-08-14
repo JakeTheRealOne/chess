@@ -114,6 +114,5 @@ public:
 
 private:
   // #### Attributes: ####
-  bool _didntMove = true;
   int _doubleUp = -1;
 };

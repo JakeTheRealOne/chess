@@ -326,7 +326,7 @@ void Game::filterEnPassant(Piece* pawn, vector<vector<int>>& moves)
 void Game::updateCheckList(Piece* piece, const int x, const int y) noexcept
 {
   _checkList.clear();
-  // Direct check
+  // Direct 
   if (piece->threat(king(not piece->player())))
   {
     // mvprintw(2, 0, "DIRECT THREAT %s", string(1, piece->repr()).c_str()); // DEBUG

@@ -104,6 +104,13 @@ public:
    */
   int index() const noexcept;
 
+  /**
+   * @brief To get the signature of the current game ()
+   * 
+   * @return int 
+   */
+  int signature64();
+
   // #### Methods: ####
 
   /**

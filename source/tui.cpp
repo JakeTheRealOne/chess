@@ -94,19 +94,19 @@ void TUI::initColors() noexcept
   */
 
   // Themes
-  init_color(47, 823, 705, 549); // Classic
+  init_color(47, 823, 705, 549); //< Classic
   init_pair(47, -1, 47);
   init_color(48, 450, 290, 184);
   init_pair(48, -1, 48);
-  init_color(49, 1000, 1000, 1000); // Glass
+  init_color(49, 1000, 1000, 1000); //< Glass
   init_pair(49, -1, 49);
   init_color(50, 615, 764, 878);
   init_pair(50, -1, 50);
-  init_color(51, 910, 902, 882); // Tournament
+  init_color(51, 910, 902, 882); //< Tournament
   init_pair(51, -1, 51);
   init_color(52, 188, 384, 275);
   init_pair(52, -1, 52);
-  init_color(53, 769, 737, 651);
+  init_color(53, 769, 737, 651); //< Rich
   init_pair(53, -1, 53);
   init_color(54, 416, 400, 380);
   init_pair(54, -1, 54);
@@ -125,7 +125,7 @@ void TUI::initColors() noexcept
   init_pair(1, COLOR_RED, COLOR_WHITE); // Cursor color
   init_pair(2, COLOR_RED, COLOR_BLUE);
 
-  init_color(COLOR_YELLOW, 654, 498, 411);
+  init_color(COLOR_YELLOW, 637, 498, 367);
   init_pair(3, COLOR_YELLOW, COLOR_WHITE); // White pieces
   init_pair(4, COLOR_YELLOW, COLOR_BLUE);
 
@@ -429,8 +429,6 @@ int TUI::getTheme() const noexcept
     }
   }
   while (input and input != 1);
-  mvprintw(0, 0, "output: %d", (bool)input * (menuIndex + 1));
-  getch();
   return (bool)input * (menuIndex + 1); // TODO
 }
 
@@ -474,10 +472,12 @@ void TUI::update(const int x, const int y, const bool isCursor) const noexcept
   }
   else
   {
+    attron(A_BOLD);
     colorPair = isCursor ? colorPair : 3 + ((x + y) % 2) + (_game->at(x, y)->player() << 1);
     content = string(1, _game->at(x, y)->repr());
   }
   attron(COLOR_PAIR(colorPair));
   mvprintw(_yOffset + y, _xOffset + (x << 1), " %s", content.c_str());
   attroff(COLOR_PAIR(colorPair));
+  attroff(A_BOLD);
 }
