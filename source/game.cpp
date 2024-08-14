@@ -142,30 +142,57 @@ int Game::index() const noexcept
 }
 
 
+bool Game::drawBy50Moves() const noexcept
+{
+  return this->_50moveRules > 49;
+}
+
+
+bool Game::drawByRepetition() const noexcept
+{
+  return false; // TODO
+}
+
+int Game::signature64() const noexcept
+{
+  return -1;
+}
+
+
 bool Game::move(Piece* piece, const int x, const int y, const bool force) noexcept
 {
   // Check the legality of the move:
   vector<int> pos = {x, y};
   vector<vector<int>> available = (piece == nullptr ? vector<vector<int>>(/*empty list*/) : piece->read());
+  bool eat = false;
   if (not force and find(available.begin(), available.end(), pos) == available.end())
   {
     return 1;
   }
   if (_board[y][x] != nullptr)
   {
+    eat = true;
     delete _board[y][x];
   }
   else if (piece->isPawn() and piece->x() != x)
   {
+    eat = true;
     delete _board[piece->y()][x];
     _board[piece->y()][x] = nullptr;
   }
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
-
-  static int tmp = 1;
-  ++ tmp;
+  if (piece->isPawn() or eat)
+  {
+    // Reset 50 moves rule Counting
+    _50moveRules = 0;
+  }
+  else
+  {
+    // Increment 50 moves rule Counting
+    ++ _50moveRules;
+  }
   return 0;
 }
 
@@ -512,6 +539,10 @@ Piece* Game::isDiscoveryCheck(const int x, const int y, const bool player) const
 
 bool Game::isMate() noexcept
 {
+  if (drawBy50Moves() or drawByRepetition())
+  {
+    return true;
+  }
   Piece* piece;
   for (int i = 0; i < SIZE; ++ i)
   {

@@ -105,11 +105,26 @@ public:
   int index() const noexcept;
 
   /**
+   * @brief To get if there was 50 moves without taking a piece or a pawn advancement
+   * 
+   * @return true If the last 50 moves was not as said in the brief
+   * @return false Else
+   */
+  bool drawBy50Moves() const noexcept;
+
+  /**
+   * @brief To get if there was at least 3 identical position during the game
+   * 
+   * @return bool 
+   */
+  bool drawByRepetition() const noexcept;
+
+  /**
    * @brief To get the signature of the current game ()
    * 
    * @return int 
    */
-  int signature64();
+  int signature64() const noexcept;
 
   // #### Methods: ####
 
@@ -191,9 +206,9 @@ private:
   vector<vector<Piece*>> _board;
   vector<Piece*> _checkList; //< The list of piece checking current player
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)
-  King* _whiteKing;
-  King* _blackKing;
+  King* _whiteKing, * _blackKing;
   int _index = 0; //< The index of the current move in the game (from 0 to inf.)
+  int _50moveRules = 0; //< The index used in counting the 50 moves rule
 
   // #### Auxiliary methods: ####
 

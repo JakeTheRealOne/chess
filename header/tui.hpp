@@ -254,6 +254,21 @@ public:
    */
   int changeTheme(int index, int increment, bool orientation) const noexcept;
 
+  /**
+   * @brief read the theme from memory/theme
+   * 
+   * @return int I/O return code
+   */
+  int readTheme() const;
+
+  /**
+   * @brief Write the theme in memory/theme to remember it next time the program starts
+   * 
+   * @param theme The theme signature (from 0 to THEMES - 1)
+   * @return int I/O return code
+   */
+  int writeTheme(char theme) const;
+
 private:
   // #### Attributes: ####
   Game* _game;

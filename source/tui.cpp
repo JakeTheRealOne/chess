@@ -11,10 +11,11 @@
 
 
 // #### Std inclusions: ####
-#include <stdexcept>
+# include <stdexcept>
 # include <vector>
 # include <string>
 # include <unordered_set>
+# include <fstream>
 using namespace std;
 
 // #### Ncurses inclusion: ####
@@ -111,15 +112,7 @@ void TUI::initColors() noexcept
   init_color(54, 416, 400, 380);
   init_pair(54, -1, 54);
 
-  // Default theme:
-  //> temporary
-  short r1, g1, b1, r2, g2, b2;
-  color_content(49, &r1, &g1, &b1);
-  color_content(50, &r2, &g2, &b2);
-  init_color(COLOR_WHITE, r1, g1, b1);
-  init_color(COLOR_BLUE, r2, g2, b2);
-
-
+  readTheme();
 
   init_color(COLOR_RED, 933, 360, 349);
   init_pair(1, COLOR_RED, COLOR_WHITE); // Cursor color
@@ -480,4 +473,36 @@ void TUI::update(const int x, const int y, const bool isCursor) const noexcept
   mvprintw(_yOffset + y, _xOffset + (x << 1), " %s", content.c_str());
   attroff(COLOR_PAIR(colorPair));
   attroff(A_BOLD);
+}
+
+
+int TUI::readTheme() const
+{
+  ifstream file("memory/theme", ios::binary);
+  if (!file)
+  {
+    return 1;
+  }
+  char theme;
+  file.read(&theme, sizeof(theme));
+  int pos = (theme) << 1;
+  short r1, g1, b1, r2, g2, b2;
+  color_content(47 + pos, &r1, &g1, &b1);
+  color_content(48 + pos, &r2, &g2, &b2);
+  init_color(COLOR_WHITE, r1, g1, b1);
+  init_color(COLOR_BLUE, r2, g2, b2);
+  file.close();
+  return 0;
+}
+
+
+int TUI::writeTheme(char theme) const
+{
+  ofstream file("memory/theme", ios::binary);
+  if (!file)
+  {
+    return 1;
+  }
+  file.write(&theme, sizeof(theme));
+  return 0;
 }

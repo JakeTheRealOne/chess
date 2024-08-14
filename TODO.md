@@ -1,4 +1,3 @@
 - Add Roque
-- Add 'Save and quit' service
-- Add 'Offer a draw' and 'Give up'
-- Add Theme and Controls submenu
+- Add draw by repetition
+- Remember theme and controls

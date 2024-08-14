@@ -108,13 +108,21 @@ int newGame(TUI& tui, Game& game)
     endOfGame = game.isMate();
     // mvprintw(0, 0, "N OF CHECK: %d", (int)game.checkList().size()); // DEBUG
   }
-  if (game.checkList().size())
+  if (game.drawBy50Moves())
+  {
+    tui.showMessage("Draw: 50 moves");
+  }
+  else if (game.drawByRepetition())
+  {
+    tui.showMessage("Draw: repetition");
+  }
+  else if (game.checkList().size())
   {
     tui.showMessage("Checkmate");
   }
   else
   {
-    tui.showMessage("Stalemate");
+    tui.showMessage("Draw: Stalemate");
   }
   getch(); //< Wait for user to quit
   return 0;
@@ -140,9 +148,10 @@ int menu()
 {
   Game game;
   TUI tui(&game);
+  int input, theme;
   while (true)
   {
-    int input = tui.getMenuOption();
+    input = tui.getMenuOption();
     switch (input)
     {
       case 0:
@@ -151,7 +160,9 @@ int menu()
         newGame(tui, game);
         break;
       case 3:
-        reapplyColors(tui.getTheme());
+        theme = tui.getTheme();
+        reapplyColors(theme);
+        tui.writeTheme(theme - 1);
         break;
       default:
         throw runtime_error("comming soon");
