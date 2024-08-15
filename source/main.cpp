@@ -46,12 +46,12 @@ vector<int> getPos(TUI& tui, bool abortFlag)
 }
 
 
-void run(Game& game, TUI& tui)
+void run(Game* game, TUI& tui)
 {
   bool state = false, isOver = false;
   int x, y;
   Piece* piece;
-  tui.showMessage(game.turn() ? "Black's turn" : "White's turn");
+  tui.showMessage(game->turn() ? "Black's turn" : "White's turn");
   while (not isOver)
   {
     vector<int> pos = getPos(tui, state);
@@ -70,34 +70,34 @@ void run(Game& game, TUI& tui)
             int promotion = tui.askPromotion();
             if (promotion)
             {
-              piece = game.promote(piece, promotion);
-              isOver = not game.move(piece, pos[0], pos[1], true);
+              piece = game->promote(piece, promotion);
+              isOver = not game->move(piece, pos[0], pos[1], true);
             }
-            tui.showMessage(game.turn() ? "Black's turn" : "White's turn");
+            tui.showMessage(game->turn() ? "Black's turn" : "White's turn");
             tui.show();
           }
         else
         {
-          isOver = not game.move(piece, pos[0], pos[1]);
+          isOver = not game->move(piece, pos[0], pos[1]);
         }
       }
     }
     else
     {
-      piece = game.at(pos[0], pos[1]);
-      if (piece != nullptr and piece->player() == game.turn())
+      piece = game->at(pos[0], pos[1]);
+      if (piece != nullptr and piece->player() == game->turn())
       {
         state = tui.showMoves(pos[0], pos[1]);
       }
     }
   }
   tui.move(x, y, piece->x(), piece->y());
-  game.updateCheckList(piece, x, y);
-  ++ game;
+  game->updateCheckList(piece, x, y);
+  ++ *game;
 }
 
 
-int newGame(TUI& tui, Game& game)
+int newGame(TUI& tui, Game* game)
 {
   clear();
   bool endOfGame = false;
@@ -105,18 +105,18 @@ int newGame(TUI& tui, Game& game)
   while (not endOfGame)
   {
     run(game, tui);
-    endOfGame = game.isMate();
-    // mvprintw(0, 0, "N OF CHECK: %d", (int)game.checkList().size()); // DEBUG
+    endOfGame = game->isMate();
+    // mvprintw(0, 0, "N OF CHECK: %d", (int)game->checkList().size()); // DEBUG
   }
-  if (game.drawBy50Moves())
+  if (game->drawBy50Moves())
   {
     tui.showMessage("Draw: 50 moves");
   }
-  else if (game.drawByRepetition())
+  else if (game->drawByRepetition())
   {
     tui.showMessage("Draw: repetition");
   }
-  else if (game.checkList().size())
+  else if (game->checkList().size())
   {
     tui.showMessage("Checkmate");
   }
@@ -148,8 +148,8 @@ void reapplyColors(int signature)
 
 int menu()
 {
-  Game game;
-  TUI tui(&game);
+  Game* game = new Game();
+  TUI tui(game);
   int input, theme, startGame = false;
   while (true)
   {
@@ -171,6 +171,7 @@ int menu()
         startGame = tui.loadGame();
         if (startGame)
         {
+          game = tui.game();
           newGame(tui, game);
         }
         break;

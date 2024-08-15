@@ -1,2 +1,3 @@
 - Add Roque
 - Add Load game
+- Add Draw by repetition

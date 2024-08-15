@@ -83,6 +83,13 @@ public:
    */
   int y() const noexcept;
 
+  /**
+   * @brief Get the game used by the TUI
+   * 
+   * @return Game* 
+   */
+  Game* game() const noexcept;
+
   // #### Setters: ####
 
   /**
@@ -263,7 +270,7 @@ public:
    * 
    * @return int I/O return code
    */
-  int readTheme() const;
+  int readTheme();
 
   /**
    * @brief Write the theme in memory/theme to remember it next time the program starts
@@ -271,7 +278,7 @@ public:
    * @param theme The theme signature (from 0 to THEMES - 1)
    * @return int I/O return code
    */
-  int writeTheme(char theme) const;
+  int writeTheme(char theme);
 
   /**
    * @brief Show the load menu
@@ -351,6 +358,7 @@ private:
   int _screenWidth, _screenHeight; //< Screen size
   int _xOffset, _yOffset;
   vector<fs::path> _saveFiles;
+  int _theme = 0; //< Theme index
 
   // #### auxiliary methods: ####
 

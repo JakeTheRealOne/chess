@@ -46,6 +46,8 @@ _game(game)
 
 TUI::~TUI()
 {
+  delete _game;
+  _game = nullptr;
   endwin();
 }
 
@@ -59,6 +61,12 @@ int TUI::x() const noexcept
 int TUI::y() const noexcept
 {
   return _y;
+}
+
+
+Game* TUI::game() const noexcept
+{
+  return _game;
 }
 
 
@@ -305,7 +313,7 @@ void TUI::showThemes() const noexcept
   }
   // Display selector:
   attron(COLOR_PAIR(9));
-  mvprintw(_yOffset + 2, offset, "    ");
+  mvprintw(_yOffset + 2, offset + (_theme * 5), "    ");
   attroff(COLOR_PAIR(9));
 }
 
@@ -416,7 +424,7 @@ int TUI::changeMenu(int index, int increment) const noexcept
 
 int TUI::getTheme() const noexcept
 {
-  int input, menuIndex = 0;
+  int input, menuIndex = _theme;
   showThemes();
   do
   {
@@ -481,7 +489,7 @@ void TUI::update(const int x, const int y, const bool isCursor) const noexcept
 }
 
 
-int TUI::readTheme() const
+int TUI::readTheme()
 {
   ifstream file("memory/theme", ios::binary);
   if (!file)
@@ -490,6 +498,7 @@ int TUI::readTheme() const
   }
   char theme;
   file.read(&theme, sizeof(theme));
+  _theme = (int)theme;
   int pos = (theme) << 1;
   short r1, g1, b1, r2, g2, b2, r3, g3, b3;
   color_content(47 + pos, &r1, &g1, &b1);
@@ -503,13 +512,18 @@ int TUI::readTheme() const
 }
 
 
-int TUI::writeTheme(char theme) const
+int TUI::writeTheme(char theme)
 {
+  if (theme == -1)
+  {
+    return 1;
+  }
   ofstream file("memory/theme", ios::binary);
   if (!file)
   {
     return 1;
   }
+  _theme = (int)theme;
   file.write(&theme, sizeof(theme));
   return 0;
 }
@@ -532,7 +546,9 @@ int TUI::showLoadMenu()
     if (moves != -1)
     {
       _saveFiles.push_back(entry.path());
+      attron(COLOR_PAIR(10));
       mvprintw(pos, _xOffset, "%s", cut16(entry.path()).c_str());
+      attroff(COLOR_PAIR(10));
       mvprintw(pos + 1, _xOffset, "%d moves played", (unsigned char)moves);
       ++ index;
       pos += 3;
@@ -575,11 +591,11 @@ int TUI::changeLoad(int index, int increment, bool orientation) const noexcept
 
 int TUI::loadGame()
 {
-  int option;
+  int option, index, input;
   while (true)
   {
     showLoadMenu();
-    int input, index = 0;
+    index = 0;
     do
     {
       input = getkey();
@@ -600,14 +616,22 @@ int TUI::loadGame()
       break;
     }
   }
-  mvprintw(0, 0, "%s", option ? "DEL" : "USE");
-  getch();
+  if (option)
+  {
+    fs::remove(_saveFiles[index]);
+  }
+  else
+  {
+    delete _game;
+    _game = new Game(_saveFiles[index]);
+  }
   return not option;
 }
 
 
 int TUI::readFile(string path) const
 {
+  // Magic bytes:
   static char expected[9] = {'C', 'H', 'E', 'S', 'S', 'J', 'K', 'L', 'V'};
   ifstream file(path, ios::binary);
   if (!file)
@@ -624,12 +648,6 @@ int TUI::readFile(string path) const
   file.read(&moves, sizeof(moves));
   file.close();
   return (int)moves;
-}
-
-
-void TUI::fromFile(string path)
-{
-
 }
 
 
@@ -654,7 +672,9 @@ void TUI::showLoadOptions(int index)
 {
   clear();
   showLogo();
+  attron(COLOR_PAIR(10));
   mvprintw(_yOffset, _xOffset, "%s", cut16(_saveFiles[index]).c_str());
+  attroff(COLOR_PAIR(10));
   for (int option = 0; option < 3; ++ option)
   {
     attron(COLOR_PAIR(9 + (bool)option));

@@ -80,7 +80,11 @@ Game::Game()
 
 Game::Game(string path)
 {
-  // COMING SOON
+  for (int y = 0; y < SIZE; ++ y)
+  {
+    _board.push_back(vector<Piece*>(SIZE, nullptr));
+  }
+  // Get
 }
 
 
