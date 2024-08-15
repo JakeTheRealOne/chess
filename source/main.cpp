@@ -150,7 +150,7 @@ int menu()
 {
   Game game;
   TUI tui(&game);
-  int input, theme;
+  int input, theme, startGame = false;
   while (true)
   {
     input = tui.getMenuOption();
@@ -167,8 +167,15 @@ int menu()
         reapplyColors(theme);
         tui.writeTheme(theme - 1);
         break;
+      case 2:
+        startGame = tui.loadGame();
+        if (startGame)
+        {
+          newGame(tui, game);
+        }
+        break;
       default:
-        throw runtime_error("comming soon");
+        throw runtime_error("unexpected menu behavior");
     }
   }
 }

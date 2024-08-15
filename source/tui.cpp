@@ -16,7 +16,9 @@
 # include <string>
 # include <unordered_set>
 # include <fstream>
+# include <filesystem>
 using namespace std;
+namespace fs = filesystem;
 
 // #### Ncurses inclusion: ####
 # include <ncurses.h>
@@ -510,4 +512,191 @@ int TUI::writeTheme(char theme) const
   }
   file.write(&theme, sizeof(theme));
   return 0;
+}
+
+
+int TUI::showLoadMenu()
+{
+  _saveFiles.clear();
+  clear();
+  showLogo();
+  fs::directory_iterator savedGames("memory/saved_games");
+  int index = 0, moves, pos = _yOffset;
+  for (fs::directory_entry entry : savedGames)
+  {
+    if (index >= 6)
+    {
+      break; //< Prevent graphical bugs
+    }
+    moves = readFile(entry.path());
+    if (moves != -1)
+    {
+      _saveFiles.push_back(entry.path());
+      mvprintw(pos, _xOffset, "%s", cut16(entry.path()).c_str());
+      mvprintw(pos + 1, _xOffset, "%d moves played", (unsigned char)moves);
+      ++ index;
+      pos += 3;
+    }
+  }
+  if (index == 0)
+  {
+    mvprintw(_yOffset, _xOffset, "No save files found");
+  }
+  else {
+    attron(COLOR_PAIR(9));
+    mvprintw(_yOffset, _xOffset, "%s", cut16(_saveFiles[0]).c_str());
+    attroff(COLOR_PAIR(9));
+  }
+  return index;
+}
+
+
+int TUI::changeLoad(int index, int increment, bool orientation) const noexcept
+{
+  int newIndex = index + increment;
+  if (newIndex >= 0 and newIndex < _saveFiles.size())
+  {
+    attron(COLOR_PAIR(10));
+    mvprintw(_yOffset + (index * 3), _xOffset, "%s", cut16(_saveFiles[index]).c_str());
+    attroff(COLOR_PAIR(10));
+
+    attron(COLOR_PAIR(9));
+    mvprintw(_yOffset + (newIndex * 3), _xOffset, "%s", cut16(_saveFiles[newIndex]).c_str());
+    attroff(COLOR_PAIR(9));
+
+    return newIndex;
+  }
+  else
+  {
+    return index;
+  }
+}
+
+
+int TUI::loadGame()
+{
+  int option;
+  while (true)
+  {
+    showLoadMenu();
+    int input, index = 0;
+    do
+    {
+      input = getkey();
+      if (input == 2 or input == 3)
+      {
+        index = changeLoad(index, input == 2 ? -1 : +1, 0);
+      }
+    }
+    while (input and input != 1);
+    if (_saveFiles.empty() or not input)
+    {
+      return 0;
+    }
+    showLoadOptions(index);
+    option = getLoadOption();
+    if (option < 2)
+    {
+      break;
+    }
+  }
+  mvprintw(0, 0, "%s", option ? "DEL" : "USE");
+  getch();
+  return not option;
+}
+
+
+int TUI::readFile(string path) const
+{
+  static char expected[9] = {'C', 'H', 'E', 'S', 'S', 'J', 'K', 'L', 'V'};
+  ifstream file(path, ios::binary);
+  if (!file)
+  {
+    return -1;
+  }
+  char signature[9];
+  file.read(signature, sizeof(signature));
+  if (not equal(begin(expected), end(expected), begin(signature)))
+  {
+    return -1;
+  }
+  char moves;
+  file.read(&moves, sizeof(moves));
+  file.close();
+  return (int)moves;
+}
+
+
+void TUI::fromFile(string path)
+{
+
+}
+
+
+string TUI::cut16(fs::path path) const
+{
+  string output = path.filename();
+  if (output.size() < 16)
+  {
+    output.reserve(16);
+    output.append(string(16 - output.size(), ' '));
+  }
+  else if (output.size() > 16)
+  {
+    output.erase(output.begin() + 13, output.end());
+    output.append("...");
+  }
+  return output;
+}
+
+
+void TUI::showLoadOptions(int index)
+{
+  clear();
+  showLogo();
+  mvprintw(_yOffset, _xOffset, "%s", cut16(_saveFiles[index]).c_str());
+  for (int option = 0; option < 3; ++ option)
+  {
+    attron(COLOR_PAIR(9 + (bool)option));
+    mvprintw(_yOffset + ((option + 1) << 1), _xOffset, "%s", LOAD_OPTIONS[option].c_str());
+    attroff(COLOR_PAIR(9 + (bool)option));
+  }
+}
+
+
+int TUI::getLoadOption()
+{
+  int input, index = 0;
+  do
+  {
+    input = getkey();
+    if (input == 2 or input == 3)
+    {
+      index = changeLoadOption(index,input == 2 ? -1 : +1);
+    }
+  }
+  while (input and input != 1);
+  return (not input ? 2 : index);
+}
+
+
+int TUI::changeLoadOption(int index, int increment)
+{
+  int newIndex = index + increment;
+  if (newIndex >= 0 and newIndex < 3)
+  {
+    attron(COLOR_PAIR(10));
+    mvprintw(_yOffset + ((index + 1) << 1), _xOffset, "%s", LOAD_OPTIONS[index].c_str());
+    attroff(COLOR_PAIR(10));
+
+    attron(COLOR_PAIR(9));
+    mvprintw(_yOffset + ((newIndex + 1) << 1), _xOffset, "%s", LOAD_OPTIONS[newIndex].c_str());
+    attroff(COLOR_PAIR(9));
+
+    return newIndex;
+  }
+  else
+  {
+    return index;
+  }
 }

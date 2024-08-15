@@ -23,7 +23,9 @@
 # include <vector>
 # include <unordered_set>
 # include <string>
+# include <filesystem>
 using namespace std;
+namespace fs = filesystem;
 
 
 /**
@@ -40,6 +42,8 @@ public:
   const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "      Quit      "};
   const vector<string> LOGO = {"       _                   ", "   ___| |__   ___  ___ ___ ", "  / __| '_ \\ / _ \\/ __/ __|", " | (__| | | |  __/\\__ \\__ \\", "  \\___|_| |_|\\___||___/___/"};
   const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5, THEMES = 4;
+  const vector<string> LOAD_OPTIONS = {"  Use           ", "  Delete        ", "  Go back       "};
+
 
   // #### Constructors: ####
 
@@ -269,6 +273,76 @@ public:
    */
   int writeTheme(char theme) const;
 
+  /**
+   * @brief Show the load menu
+   * 
+   * @return int The number of save files
+   */
+  int showLoadMenu();
+
+  /**
+   * @brief Change the index of the current selected load option
+   * 
+   * @param index The current index
+   * @param increment The increment
+   * @param orientation The orientation of the increment (0 = vertical, 1 = horizontal)
+   * @return int The updated index
+   */
+  int changeLoad(int index, int increment, bool orientation) const noexcept;
+
+  /**
+   * @brief Open the load menu and change _game with a saved game
+   * 
+   * @return int If there should be a new game after the action
+   */
+  int loadGame();
+
+  /**
+   * @brief Read partially a save file
+   * 
+   * @param path The path of the save file
+   * @return int The number of moves of the chess
+   */
+  int readFile(string path) const;
+
+  /**
+   * @brief Given a path, load a saved chess game
+   * 
+   * @param path The path of the save file
+   */
+  void fromFile(string path);
+
+  /**
+   * @brief Return the file name of a path, with a lenght of 16 chars
+   * 
+   * @param path The filesystem::path object
+   * @return string
+   */
+  string cut16(fs::path path) const;
+
+  /**
+   * @brief Show the options for the save file at index
+   * 
+   * @param index The index of the save file in _saveFiles
+   */
+  void showLoadOptions(int index);
+
+  /**
+   * @brief Get the selected load option by the user
+   * 
+   * @return int The index of the option (0 = Use, 1 = Delete, 2 = Go back)
+   */
+  int getLoadOption();
+
+  /**
+   * @brief Change the load option currently selected
+   * 
+   * @param index The current index
+   * @param increment The increment
+   * @return int 
+   */
+  int changeLoadOption(int index, int increment);
+
 private:
   // #### Attributes: ####
   Game* _game;
@@ -276,7 +350,7 @@ private:
   int _x = 0, _y = 0; //< Cursor position
   int _screenWidth, _screenHeight; //< Screen size
   int _xOffset, _yOffset;
-
+  vector<fs::path> _saveFiles;
 
   // #### auxiliary methods: ####
 
