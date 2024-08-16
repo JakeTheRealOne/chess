@@ -143,13 +143,6 @@ public:
    */
   virtual bool isPawn() const noexcept;
 
-  /**
-   * @brief To get the Pinned flag
-   * 
-   * @return true If the chess piece is blocking a check (pinned to the king)
-   * @return false Else
-   */
-  virtual bool isPinned() const noexcept;
 
   // #### Setters: ####
 
@@ -183,19 +176,9 @@ public:
   /**
    * @brief Return if the piece threatens another piece
    * 
-   * @param piece The target piece
    * @return false Because an empty piece cannot threat any other piece
    */
-  virtual bool threat(Piece* piece);
-
-  /**
-   * @brief Return if the piece is pinned to another piece
-   * 
-   * @param source The threat Piece
-   * @param target The target Piece of the threat
-   * @return false becausre an empty piece cannot block any attack
-   */
-  virtual bool pinned(Piece* source, Piece* target);
+  virtual bool threat(Piece*);
 
   // #### Operators: ####
 
@@ -225,25 +208,4 @@ protected:
   vector<vector<int>> _savedMoves; //> Used to prevent redondant computing.
   char _repr = '?';
   Game* _game = nullptr;
-
-private:
-  // #### Auxiliary methods: ####
-
-  /**
-   * @brief (used in Piece::isPinned) To check if the piece is pinned on its column
-   * 
-   * @param king The king of the piece
-   * @return true If pinned on the column
-   * @return false Else
-   */
-  bool checkCol(Piece* king) const noexcept;
-
-  /**
-   * @brief (used in Piece::isPinned) To check if the piece is pinned on its row
-   * 
-   * @param king The king of the piece
-   * @return true If pinned on the row
-   * @return false Else
-   */
-  bool checkRow(Piece* king) const noexcept;
 };

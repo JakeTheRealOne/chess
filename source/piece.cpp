@@ -91,62 +91,6 @@ bool Piece::isPawn() const noexcept
 }
 
 
-bool Piece::isPinned() const noexcept
-{
-  // check if diag or col or row of the piece is the same as their king and check if Q B R on it too
-  Piece* myKing = _game->king(_player);
-  if (myKing->x() == _x) // Column
-  {
-    return checkCol(myKing);
-  }
-  else if (myKing->y() == _y) // Row
-  {
-    return checkRow(myKing);
-  }
-  else if (false) // Diagonal 1
-  {
-
-  }
-  else if (false) // Diagonal 2
-  {
-
-  }
-  return false;
-}
-
-
-bool Piece::checkCol(Piece* king) const noexcept
-{
-  // int start, end;
-  // if (king->y() < _y)
-  // {
-  //   start = king->y();
-  //   end = _y;
-  // }
-  // else
-  // {
-  //   start = _y;
-  //   end = king->y();
-  // }
-  // // check the space between
-  // for (int i = start; i < end; ++ i)
-  // {
-  //   if (_game->at(_x, i) != nullptr)
-  //   {
-  //     return false;
-  //   }
-  // }
-  // check the space after for any Q or R
-  return false;
-}
-
-
-bool Piece::checkRow(Piece* king) const noexcept
-{
-  return false;
-}
-
-
 void Piece::simulateMove(const int x, const int y) noexcept
 {
   _x = x;
@@ -168,13 +112,7 @@ vector<vector<int>> Piece::read()
 }
 
 
-bool Piece::threat(Piece*  piece)
-{
-  return false;
-}
-
-
-bool Piece::pinned(Piece* threat, Piece* target)
+bool Piece::threat(Piece*)
 {
   return false;
 }

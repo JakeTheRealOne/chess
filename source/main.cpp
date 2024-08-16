@@ -152,7 +152,7 @@ void reapplyColors(int signature)
   short r1, g1, b1, r2, g2, b2, r3, g3, b3;
   color_content(47 + pos, &r1, &g1, &b1);
   color_content(48 + pos, &r2, &g2, &b2);
-  color_content(37 + (signature == 1 or signature == 4), &r3, &g3, &b3);
+  color_content(37 + (signature == 1 or signature == 4 or signature == 6), &r3, &g3, &b3);
   init_color(COLOR_WHITE, r1, g1, b1);
   init_color(COLOR_BLUE, r2, g2, b2);
   init_color(COLOR_RED, r3, g3, b3);

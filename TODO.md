@@ -1,2 +1,1 @@
-- Add more themes
-- Add Help page
+- (Add Help page)

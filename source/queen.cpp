@@ -57,7 +57,7 @@ vector<vector<int>> Queen::read() noexcept
   _savedMoves.clear();
   _savedIndex = _game->index();
 
-  int size = _game->SIZE, offsetX, offsetY, i, j, increI, increJ;
+  int size = _game->SIZE, i, j, increI, increJ;
   // Bishop behavior:
   for (int a = 0; a < 4; ++ a)
   {

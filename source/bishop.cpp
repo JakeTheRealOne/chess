@@ -57,7 +57,7 @@ vector<vector<int>> Bishop::read() noexcept
   _savedMoves.clear();
   _savedIndex = _game->index();
 
-  int size = _game->SIZE, offsetX, offsetY, i, j, increI, increJ;
+  int size = _game->SIZE, i, j, increI, increJ;
   for (int a = 0; a < 4; ++ a)
   {
     increI = a >> 1 ? 1 : -1;

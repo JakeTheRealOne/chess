@@ -85,7 +85,6 @@ vector<vector<int>> Pawn::read() noexcept
 
   int size = _game->SIZE;
   int offsetY = _y + (_player ? 1 : -1);
-  auto tmp = _game->at(_x, offsetY);
   if (offsetY >= 0 and offsetY < size and _game->at(_x, offsetY) == nullptr)
   {
     _savedMoves.push_back({_x, offsetY});

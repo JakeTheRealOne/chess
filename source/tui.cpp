@@ -83,7 +83,7 @@ void TUI::initVars() noexcept
 {
   ESCDELAY = 0;
   initscr();
-  cbreak();
+  cbreak(); 
   noecho();
   curs_set(0);
   start_color();
@@ -121,10 +121,27 @@ void TUI::initColors() noexcept
   init_pair(53, -1, 53);
   init_color(54, 416, 400, 380);
   init_pair(54, -1, 54);
+  init_color(55, 604, 635, 643); //< Ectoplasm
+  init_pair(55, -1, 55);
+  init_color(56, 204, 310, 337);
+  init_pair(56, -1, 56);
+  init_color(57, 1000, 784, 867); //< Pink pastel
+  init_pair(57, -1, 57);
+  init_color(58, 1000, 686, 800);
+  init_pair(58, -1, 58);
+  init_color(59, 741, 878, 996); //< Blue pastel
+  init_pair(59, -1, 59);
+  init_color(60, 635, 824, 1000);
+  init_pair(60, -1, 60);
+  init_color(61, 780, 976, 800); //< Green pastel
+  init_pair(61, -1, 61);
+  init_color(62, 502, 929, 600);
+  init_pair(62, -1, 62);
+
 
   // Cursor color
-  init_color(37, 647, 78, 212);
-  init_color(38, 267, 78, 647);
+  init_color(37, 788, 94, 290);
+  init_color(38, 235, 35, 424);
 
   readTheme();
 
@@ -144,12 +161,6 @@ void TUI::initColors() noexcept
 
   init_pair(9, COLOR_BLACK, COLOR_WHITE); // Promotion panel
   init_pair(10, COLOR_WHITE, -1);
-}
-
-
-void TUI::resizeWindow(int sig) noexcept
-{
-  // TODO
 }
 
 void TUI::computeScreenSize() noexcept
@@ -260,7 +271,7 @@ void TUI::moveCursor(const int direction) noexcept
 
 void TUI::showHelp(const short type) const noexcept
 {
-  // TODO
+  mvprintw(0, 0, "[?] %d", type);
 }
 
 
@@ -318,7 +329,7 @@ void TUI::showThemes() const noexcept
   }
   // Display selector:
   attron(COLOR_PAIR(9));
-  mvprintw(_yOffset + 2, offset + (_theme * 5), "    ");
+  mvprintw(_yOffset + 2 + ((_theme / 4) << 2), offset + ((_theme % 4) * 5), "    ");
   attroff(COLOR_PAIR(9));
 }
 
@@ -353,7 +364,7 @@ void TUI::showPromotionPanel() const noexcept
 
 int TUI::changePromotion(int index, int increment) const noexcept
 {
-  if (index + increment < 0 or index + increment >= PROMOTION_OPTIONS.size())
+  if (index + increment < 0 or index + increment >= (int)PROMOTION_OPTIONS.size())
   {
     return index; // Abort
   }
@@ -385,7 +396,7 @@ int TUI::askPromotion() const noexcept
     }
   }
   while (input and input != 1);
-  return (bool)input * (menuIndex + 1); // TODO
+  return (bool)input * (menuIndex + 1);
 }
 
 
@@ -402,13 +413,13 @@ int TUI::getMenuOption() const noexcept
     }
   }
   while (input and input != 1);
-  return (bool)input * (menuIndex + 1); // TODO
+  return (bool)input * (menuIndex + 1);
 }
 
 
 int TUI::changeMenu(int index, int increment) const noexcept
 {
-  if (index + increment < 0 or index + increment >= MENU_OPTIONS.size())
+  if (index + increment < 0 or index + increment >= (int)MENU_OPTIONS.size())
   {
     return index; // Abort
   }
@@ -440,18 +451,18 @@ int TUI::getTheme() const noexcept
     }
   }
   while (input and input != 1);
-  return (bool)input * (menuIndex + 1); // TODO
+  return (bool)input * (menuIndex + 1);
 }
 
 
 int TUI::changeTheme(int index, int increment, bool orientation) const noexcept
 {
-  int newIndex = index + (orientation ? 1 : 4 ) * increment, offset = _xOffset - 1;
+  int newIndex = index + (orientation ? 1 : 4) * increment, offset = _xOffset - 1;
   if (0 <= newIndex and newIndex < THEMES)
   {
-    mvprintw(_yOffset + 2 + (index / 4), offset + ((index % 4) * 5), "    ");
+    mvprintw(_yOffset + 2 + ((index / 4) << 2), offset + ((index % 4) * 5), "    ");
     attron(COLOR_PAIR(9));
-    mvprintw(_yOffset + 2 + (newIndex / 4), offset + ((newIndex % 4) * 5), "    ");
+    mvprintw(_yOffset + 2 + ((newIndex / 4) << 2), offset + ((newIndex % 4) * 5), "    ");
     attroff(COLOR_PAIR(9));
     return newIndex;
   }
@@ -508,7 +519,7 @@ int TUI::readTheme()
   short r1, g1, b1, r2, g2, b2, r3, g3, b3;
   color_content(47 + pos, &r1, &g1, &b1);
   color_content(48 + pos, &r2, &g2, &b2);
-  color_content(37 + (not theme or theme == 3), &r3, &g3, &b3);
+  color_content(37 + (not theme or theme == 3 or theme == 5), &r3, &g3, &b3);
   init_color(COLOR_WHITE, r1, g1, b1);
   init_color(COLOR_BLUE, r2, g2, b2);
   init_color(COLOR_RED, r3, g3, b3);
@@ -572,10 +583,10 @@ int TUI::showLoadMenu()
 }
 
 
-int TUI::changeLoad(int index, int increment, bool orientation) const noexcept
+int TUI::changeLoad(int index, int increment) const noexcept
 {
   int newIndex = index + increment;
-  if (newIndex >= 0 and newIndex < _saveFiles.size())
+  if (newIndex >= 0 and newIndex < (int)_saveFiles.size())
   {
     attron(COLOR_PAIR(10));
     mvprintw(_yOffset + (index * 3), _xOffset, "%s", cut16(_saveFiles[index]).c_str());
@@ -606,7 +617,7 @@ int TUI::loadGame()
       input = getkey();
       if (input == 2 or input == 3)
       {
-        index = changeLoad(index, input == 2 ? -1 : +1, 0);
+        index = changeLoad(index, input == 2 ? -1 : +1);
       }
     }
     while (input and input != 1);

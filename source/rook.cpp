@@ -58,7 +58,7 @@ vector<vector<int>> Rook::read() noexcept
   _savedMoves.clear();
   _savedIndex = _game->index();
 
-  int size = _game->SIZE, offsetX, offsetY;
+  int size = _game->SIZE;
   for (int i = _x + 1; i < size; ++ i)
   {
     if (not checkTarget(i, _y)){

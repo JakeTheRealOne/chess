@@ -41,7 +41,7 @@ public:
   const vector<string> PROMOTION_OPTIONS = {"  Queen         ", "  Rook          ", "  Bishop        ", "  Knight        "};
   const vector<string> MENU_OPTIONS =      {"    New game    ", "    Load game   ", "     Themes     ", "      Quit      "};
   const vector<string> LOGO = {"       _                   ", "   ___| |__   ___  ___ ___ ", "  / __| '_ \\ / _ \\/ __/ __|", " | (__| | | |  __/\\__ \\__ \\", "  \\___|_| |_|\\___||___/___/"};
-  const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5, THEMES = 4;
+  const int LOGO_WIDTH = 27, LOGO_HEIGHT = 5, THEMES = 8;
   const vector<string> LOAD_OPTIONS = {"  Use           ", "  Delete        ", "  Go back       "};
 
 
@@ -107,12 +107,6 @@ public:
    * 
    */
   void show() const noexcept;
-
-  /**
-   * @brief Resize the TUI to center the board on the screen
-   * 
-   */
-  static void resizeWindow(int sig) noexcept;
 
   /**
    * @brief Compute the screen size and x, y offset for display
@@ -295,7 +289,7 @@ public:
    * @param orientation The orientation of the increment (0 = vertical, 1 = horizontal)
    * @return int The updated index
    */
-  int changeLoad(int index, int increment, bool orientation) const noexcept;
+  int changeLoad(int index, int increment) const noexcept;
 
   /**
    * @brief Open the load menu and change _game with a saved game

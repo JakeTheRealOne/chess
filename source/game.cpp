@@ -311,7 +311,7 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
     {
       moveX = moves[i][0], moveY = moves[i][1];
       if (
-        moveX == threat->x() and moveY == threat->y()
+        (moveX == threat->x() and moveY == threat->y())
         or
         (piece->isPawn() and moveX != x and _board[moveY][moveX] == nullptr
         and threat->isPawn() and threat->x() == moveX and threat->y() == y)
@@ -377,9 +377,11 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
 void Game::filterEnPassant(Piece* pawn, vector<vector<int>>& moves)
 {
   // En passant
-  int x = pawn->x(), y = pawn->y(), moveX, moveY, n = moves.size();
+  int x = pawn->x(), moveX, moveY, n = moves.size();
   for (int i = 0; i < n; ++ i)
   {
+    moveX = moves[i][0];
+    moveY = moves[i][1];
     if (moveX != x and _board[moveY][moveX] == nullptr)
     {
       bool notBlocked = isDiscoveryCheck(moveX, moveY, pawn->player());

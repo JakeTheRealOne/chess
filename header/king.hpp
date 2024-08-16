@@ -98,13 +98,6 @@ public:
    */
   void readCastling() noexcept;
 
-  /**
-   * @brief Execute the short/long castling
-   *
-   * @param isShort The flag that indiquates if it kingside or not
-   */
-  void executeCastling(bool isShort) noexcept;
-
   // #### Operator: ####
 
   /**

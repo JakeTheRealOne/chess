@@ -135,12 +135,6 @@ void King::readCastling() noexcept
 }
 
 
-void King::executeCastling(bool isShort) noexcept
-{
-
-}
-
-# include <ncurses.h>
 bool King::castlingLegal(Rook* rook) const noexcept
 {
   int increment = rook->x() < _x ? +1 : -1;
