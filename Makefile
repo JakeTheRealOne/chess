@@ -15,7 +15,7 @@ SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 EXEC := chess
 
-all: $(EXEC)
+all: create_obj_dir $(EXEC)
 
 $(EXEC): $(OBJECTS)
 	$(CC) $(FLAGS) $(OBJECTS) -o $@ $(NCURSES_FLAGS)
@@ -26,3 +26,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -f $(OBJ_DIR)/*.o $(EXEC)
+
+create_obj_dir:
+	mkdir -p object
