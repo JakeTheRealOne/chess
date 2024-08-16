@@ -86,7 +86,7 @@ int run(Game* game, TUI& tui)
     {
       if (pos.empty())
       {
-        game->save("memory/saved_games/test");
+        game->save();
         return 1;
       }
       piece = game->at(pos[0], pos[1]);
@@ -103,16 +103,19 @@ int run(Game* game, TUI& tui)
 }
 
 
-int newGame(TUI& tui, Game* game)
+int newGame(TUI& tui, Game* game, bool fromFile)
 {
   clear();
+  if (not fromFile and tui.askName())
+  {
+    return 1;
+  }
   bool endOfGame = false, brutalStop = false;
   tui.show();
   while (not endOfGame and not brutalStop)
   {
     brutalStop = run(game, tui);
     endOfGame = game->isMate();
-    // mvprintw(0, 0, "N OF CHECK: %d", (int)game->checkList().size()); // DEBUG
   }
   if (brutalStop)
   {
@@ -163,6 +166,7 @@ int menu()
   int input, theme, startGame = false;
   while (true)
   {
+    tui.setGame(game);
     input = tui.getMenuOption();
     switch (input)
     {
@@ -170,7 +174,10 @@ int menu()
       case 4:
         return 0;
       case 1:
-        newGame(tui, game);
+        delete game;
+        game = new Game();
+        tui.setGame(game);
+        newGame(tui, game, false);
         break;
       case 3:
         theme = tui.getTheme();
@@ -182,7 +189,7 @@ int menu()
         if (startGame)
         {
           game = tui.game();
-          newGame(tui, game);
+          newGame(tui, game, true);
         }
         break;
       default:

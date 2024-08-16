@@ -28,10 +28,11 @@ Piece()
 }
 
 
-King::King(const bool player, const int x, const int y, Game* game):
+King::King(const bool player, const int x, const int y, Game* game, bool didntMove):
 Piece(player, x, y, game)
 {
   _repr = 'K';
+  _didntMove = didntMove;
 }
 
 
@@ -87,4 +88,17 @@ ostream& operator<<(ostream& stream, const King& me)
   stream << "King(" << (me._player ? "black" : "white")
          << ", " << me._x << ", " << me._y << ")";
   return stream;
+}
+
+
+bool King::didntMove() const noexcept
+{
+  return _didntMove;
+}
+
+
+void King::move(const int x, const int y) noexcept
+{
+  _didntMove = false;
+  simulateMove(x, y);
 }

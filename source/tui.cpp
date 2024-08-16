@@ -720,3 +720,24 @@ int TUI::changeLoadOption(int index, int increment)
     return index;
   }
 }
+
+
+int TUI::askName()
+{
+  attron(COLOR_PAIR(9));
+  mvprintw(_yOffset + 2, _xOffset, "%s", string(16,' ').c_str());
+  attroff(COLOR_PAIR(9));
+  char input[30];
+  attron(COLOR_PAIR(10));
+  mvprintw(_yOffset, _xOffset, "Enter game name:");
+  attroff(COLOR_PAIR(10));
+  echo();
+  attron(COLOR_PAIR(9));
+  ::move(_yOffset + 2, _xOffset);
+  getstr(input);
+  attroff(COLOR_PAIR(9));
+  noecho();
+  string name(input);
+  _game->setName(name);
+  return 0;
+}

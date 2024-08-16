@@ -161,6 +161,14 @@ public:
    */
   virtual void move(const int x, const int y) noexcept;
 
+  /**
+   * @brief Simulate the move to (x, y)
+   *
+   * @param x The new X pos to assign to the chess piece
+   * @param y The new Y pos to assign to the chess piece
+   */
+  void simulateMove(const int x, const int y) noexcept;
+
   // #### Methods: ####
 
   /**

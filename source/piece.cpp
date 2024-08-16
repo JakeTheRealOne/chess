@@ -147,10 +147,16 @@ bool Piece::checkRow(Piece* king) const noexcept
 }
 
 
-void Piece::move(const int x, const int y) noexcept
+void Piece::simulateMove(const int x, const int y) noexcept
 {
   _x = x;
   _y = y;
+}
+
+
+void Piece::move(const int x, const int y) noexcept
+{
+  simulateMove(x, y);
 }
 
 

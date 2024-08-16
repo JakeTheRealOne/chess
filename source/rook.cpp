@@ -28,10 +28,11 @@ Piece()
 }
 
 
-Rook::Rook(const bool player, const int x, const int y, Game* game):
+Rook::Rook(const bool player, const int x, const int y, Game* game, bool didntMove):
 Piece(player, x, y, game)
 {
   _repr = 'R';
+  _didntMove = didntMove;
 }
 
 
@@ -140,4 +141,17 @@ bool Rook::checkTarget(const int x, const int y) noexcept
       _savedMoves.push_back({x, y});
     }
     return false;
+}
+
+
+bool Rook::didntMove() const noexcept
+{
+  return _didntMove;
+}
+
+
+void Rook::move(const int x, const int y) noexcept
+{
+  _didntMove = false;
+  simulateMove(x, y);
 }

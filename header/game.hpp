@@ -126,6 +126,17 @@ public:
    */
   int signature64() const noexcept;
 
+  /**
+   * @brief To get the name of the current game
+   * 
+   * @return string 
+   */
+  string name() const noexcept;
+
+  // #### Setters: ####
+
+  void setName(string& newName) noexcept;
+
   // #### Methods: ####
 
   /**
@@ -188,7 +199,7 @@ public:
    * 
    * @param path The path of the save file
    */
-  void save(string path);
+  void save();
 
   // #### Operators: ####
 
@@ -210,6 +221,7 @@ public:
 
 private:
   // #### Attributes: ####
+  string _name = "<no name>";
   vector<vector<Piece*>> _board;
   vector<Piece*> _checkList; //< The list of piece checking current player
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)

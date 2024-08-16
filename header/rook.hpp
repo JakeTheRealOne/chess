@@ -44,8 +44,9 @@ public:
    * @param x The X pos of the chess piece
    * @param y The Y pos of the chess piece
    * @param game The game where the chess piece is located
+   * @param didntMove The flag didntMove of the king
    */
-  Rook(const bool player, const int x, const int y, Game* game);
+  Rook(const bool player, const int x, const int y, Game* game, bool didntMove = true);
 
   // #### Flags: ####
 
@@ -55,6 +56,14 @@ public:
    * @return true
    */
   bool isRook() const noexcept override;
+
+  /**
+   * @brief To get the didntMove flag
+   * 
+   * @return true If the rook hasnt moved yet
+   * @return false Else
+   */
+  bool didntMove() const noexcept;
 
   // #### Methods: ####
 
@@ -73,6 +82,14 @@ public:
    */
   bool threat(Piece* piece) override;
 
+  /**
+   * @brief Move the rook to (x, y)
+   *
+   * @param x The new X pos to assign to the chess piece
+   * @param y The new Y pos to assign to the chess piece
+   */
+  void move(const int x, const int y) noexcept override;
+
   // #### Operator: ####
 
   /**
@@ -85,6 +102,9 @@ public:
   friend ostream& operator<<(ostream& stream, const Rook& me);
 
 private:
+  // #### Attributes: ####
+  bool _didntMove = true;
+
   // #### Auxilary methods: ####
 
   /**

@@ -29,8 +29,9 @@
 # include <iostream>
 # include <algorithm>
 # include <fstream>
+# include <filesystem>
 using namespace std;
-
+namespace fs = filesystem;
 
 extern vector<vector<int>> KNIGHT_MOVES;
 
@@ -96,6 +97,7 @@ Game::Game(string path)
   initCheckList(file);
   // Sanity check: kings must exist
   sanityCheck();
+  _name = fs::directory_entry(path).path().filename();
 }
 
 
@@ -246,11 +248,11 @@ void Game::filterKingMoves(Piece* piece, vector<vector<int>>& moves)
     previous = _board[moveY][moveX];
     _board[moveY][moveX] = piece;
     _board[y][x] = nullptr;
-    piece->move(moveX, moveY);
+    piece->simulateMove(moveX, moveY);
     bool notSafe = knightNear(piece) or rookAndQueenNear(piece) or bishopAndQueenNear(piece) or pawnNear(piece) or kingNear(piece);
     _board[moveY][moveX] = previous;
     _board[y][x] = piece;
-    piece->move(x, y);
+    piece->simulateMove(x, y);
     if (notSafe)
     {
       swap(moves[i], moves.back());
@@ -292,11 +294,11 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
       {
         _board[moveY][moveX] = piece;
         _board[y][x] = nullptr;
-        piece->move(moveX, moveY);
+        piece->simulateMove(moveX, moveY);
         bool blocked = not threat->threat(myKing);
         _board[moveY][moveX] = nullptr;
         _board[y][x] = piece;
-        piece->move(x, y);
+        piece->simulateMove(x, y);
         if (blocked)
         {
           continue;
@@ -323,11 +325,11 @@ void Game::filterNotKingMoves(Piece* piece, vector<vector<int>>& moves)
       {
         _board[moveY][moveX] = piece;
         _board[y][x] = nullptr;
-        piece->move(moveX, moveY);
+        piece->simulateMove(moveX, moveY);
         bool blocked = not pinned->threat(myKing);
         _board[moveY][moveX] = nullptr;
         _board[y][x] = piece;
-        piece->move(x, y);
+        piece->simulateMove(x, y);
         if (blocked)
         {
           continue;
@@ -803,7 +805,7 @@ void Game::initBoard(ifstream& file)
       {
         throw runtime_error("corrupted file (ERR_CODE: 3)");
       }
-      char pieceType, pieceOwner, doubleUp;
+      char pieceType, pieceOwner, doubleUp, didntMove;
       file.read(&pieceType, sizeof(pieceType));
       file.read(&pieceOwner, sizeof(pieceOwner));
       switch (pieceType)
@@ -815,7 +817,8 @@ void Game::initBoard(ifstream& file)
           _board[y][x] = new Pawn(pieceOwner, x, y, this, doubleUp);
           break;
         case 'R':
-          _board[y][x] = new Rook(pieceOwner, x, y, this);
+          file.read(&didntMove, sizeof(didntMove));
+          _board[y][x] = new Rook(pieceOwner, x, y, this, didntMove);
           break;
         case 'N':
           _board[y][x] = new Knight(pieceOwner, x, y, this);
@@ -831,7 +834,8 @@ void Game::initBoard(ifstream& file)
           {
             throw runtime_error("corrupted file (ERR_CODE: 5)");
           }
-          (pieceOwner ? _blackKing : _whiteKing) = new King(pieceOwner, x, y, this);
+          file.read(&didntMove, sizeof(didntMove));
+          (pieceOwner ? _blackKing : _whiteKing) = new King(pieceOwner, x, y, this, didntMove);
           _board[y][x] = (pieceOwner ? _blackKing : _whiteKing);
           break;
         default:
@@ -872,10 +876,10 @@ void Game::sanityCheck()
 }
 
 
-void Game::save(string path)
+void Game::save()
 {
   static char signature[] = {'C', 'H', 'E', 'S', 'S', 'J', 'K', 'L', 'V'};
-  ofstream file(path);
+  ofstream file("memory/saved_games/" + _name);
   if (!file)
   {
     throw runtime_error("cannot write save file");
@@ -913,7 +917,7 @@ void Game::write50moves(ofstream& file)
 void Game::writeBoard(ofstream& file)
 {
   Piece* piece;
-  char pieceType, pieceOwner, doubleUp;
+  char pieceType, pieceOwner, doubleUp, didntMove;
   for (int y = 0; y < SIZE; ++ y)
   {
     for (int x = 0; x < SIZE; ++ x)
@@ -931,10 +935,23 @@ void Game::writeBoard(ofstream& file)
       }
       file.write(&pieceType, sizeof(pieceType));
       file.write(&pieceOwner, sizeof(pieceOwner));
-      if (piece != nullptr and piece->isPawn())
+      if (piece != nullptr)
       {
-        doubleUp = ((Pawn*)piece)->doubleUpIndex();
-        file.write(&doubleUp, sizeof(doubleUp));
+        if (piece->isPawn())
+        {
+          doubleUp = ((Pawn*)piece)->doubleUpIndex();
+          file.write(&doubleUp, sizeof(doubleUp));
+        }
+        else if (piece->isRook())
+        {
+          didntMove = ((Rook*)piece)->didntMove();
+          file.write(&didntMove, sizeof(didntMove));
+        }
+        else if (piece->isKing())
+        {
+          didntMove = ((King*)piece)->didntMove();
+          file.write(&didntMove, sizeof(didntMove));
+        }
       }
     }
   }
@@ -950,5 +967,20 @@ void Game::writeCheckList(ofstream& file)
     x = _checkList[index]->x(), y = _checkList[index]->y();
     file.write(&x, sizeof(x));
     file.write(&y, sizeof(y));
+  }
+}
+
+
+string Game::name() const noexcept
+{
+  return _name;
+}
+
+
+void Game::setName(string& newName) noexcept
+{
+  if (newName.size()) // Does not allow empty names
+  {
+    _name = newName;
   }
 }

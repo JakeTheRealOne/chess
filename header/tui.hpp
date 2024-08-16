@@ -350,6 +350,8 @@ public:
    */
   int changeLoadOption(int index, int increment);
 
+  int askName();
+
 private:
   // #### Attributes: ####
   Game* _game;
