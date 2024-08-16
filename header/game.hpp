@@ -16,12 +16,25 @@
 // #### Std inclusions: ####
 # include <iostream>
 # include <vector>
+# include <unordered_map>
 using namespace std;
 
 // ### Internal inclusions: ####
 # include "../header/piece.hpp"
 # include "../header/knight.hpp"
 # include "../header/king.hpp"
+
+
+struct HashOperation {
+    size_t operator()(const std::vector<char>& vec) const {
+        size_t hash = 0;
+        for (char c : vec) {
+            // Combine hash values (you can use different combining strategies, like XOR or other bitwise operations)
+            hash ^= std::hash<char>{}(c) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+        return hash;
+    }
+};
 
 
 /**
@@ -120,11 +133,11 @@ public:
   bool drawByRepetition() const noexcept;
 
   /**
-   * @brief To get the signature of the current game ()
+   * @brief To get the hash of the current position (using Zobrist method)
    * 
-   * @return int 
+   * @return vector<char> A value distinct for each possible position
    */
-  int signature64() const noexcept;
+  vector<char> hash() noexcept;
 
   /**
    * @brief To get the name of the current game
@@ -236,6 +249,8 @@ private:
   King* _whiteKing = nullptr, * _blackKing = nullptr;
   int _index = 0; //< The index of the current move in the game (from 0 to inf.)
   int _50moveRules = 0; //< The index used in counting the 50 moves rule
+  unordered_map<vector<char>, int, HashOperation> _repetitions; //< Used for the draw by repetition
+  vector<char> _hash; //< Last hash computed
 
   // #### Auxiliary methods: ####
 

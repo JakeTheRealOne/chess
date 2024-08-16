@@ -1,1 +1,2 @@
-- Add Draw by repetition
+- Add more themes
+- Add Help page

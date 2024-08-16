@@ -30,10 +30,12 @@
 # include <algorithm>
 # include <fstream>
 # include <filesystem>
+# include <unordered_map>
 using namespace std;
 namespace fs = filesystem;
 
 extern vector<vector<int>> KNIGHT_MOVES;
+
 
 Game::Game()
 {
@@ -164,12 +166,23 @@ bool Game::drawBy50Moves() const noexcept
 
 bool Game::drawByRepetition() const noexcept
 {
-  return false; // TODO
+  auto lastPosition = _repetitions.find(_hash);
+  return (lastPosition != _repetitions.end()) and (lastPosition->second >= 3);
 }
 
-int Game::signature64() const noexcept
+vector<char> Game::hash() noexcept
 {
-  return -1;
+  _hash.clear();
+  _hash.reserve(SIZE * SIZE + 1);
+  _hash.push_back(_turn);
+  for (int y = 0; y < SIZE; ++ y)
+  {
+    for (int x = 0; x < SIZE; ++ x)
+    {
+      _hash.push_back(_board[y][x] == nullptr ? 0 : _board[y][x]->repr());
+    }
+  }
+  return _hash;
 }
 
 
@@ -207,8 +220,6 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force)
     rook->move(rookTarget, piece->y());
 
   }
-
-
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
@@ -216,12 +227,16 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force)
   {
     // Reset 50 moves rule Counting
     _50moveRules = 0;
+    // Clear the repetitions hash table (things will never be like before)
+    _repetitions.clear();
   }
   else
   {
     // Increment 50 moves rule Counting
     ++ _50moveRules;
   }
+  hash();
+  ++ _repetitions[_hash];
   return 0;
 }
 
