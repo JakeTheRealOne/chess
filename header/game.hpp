@@ -147,7 +147,7 @@ public:
    * @param y The y of target position
    * @param force Indiquate if we force the move
    */
-  bool move(Piece* piece, const int x, const int y, const bool force = false) noexcept;
+  bool move(Piece* piece, const int x, const int y, const bool force = false);
 
   /**
    * @brief Return if there is no more legal move to play for current player
@@ -193,6 +193,14 @@ public:
    * @param moves The vector of pos {x, y} for each moves
    */
   void filterMoves(Piece* piece, vector<vector<int>>& moves);
+
+  /**
+   * @brief Helper for filterMoves, erase illegals moves for piece, the king
+   * 
+   * @param piece The king
+   * @param moves The moves of the king (vector of pos {x, y})
+   */
+  void filterKingMoves(Piece* piece, vector<vector<int>>& moves);
 
   /**
    * @brief Save the current game into a file
@@ -274,14 +282,6 @@ private:
    * @return Piece* The piece that is checking the king (or nullptr if none)
    */
   Piece* discoverDiagB(const int x, const int y, const bool player, Piece* king) const noexcept;
-
-  /**
-   * @brief Helper for filterMoves, erase illegals moves for piece, the king
-   * 
-   * @param piece The king
-   * @param moves The moves of the king (vector of pos {x, y})
-   */
-  void filterKingMoves(Piece* piece, vector<vector<int>>& moves);
 
   /**
    * @brief Helper for filterMoves, erase illegals moves for piece, that is not the king

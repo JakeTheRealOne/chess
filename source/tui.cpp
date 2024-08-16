@@ -187,6 +187,11 @@ void TUI::move(const int oldX, const int oldY, const int newX, const int newY) n
   {
     update(newX, oldY);
   }
+  // Castling
+  else if (_game->at(newX, newY)->isKing() and abs(newX - oldX) == 2)
+  {
+    update(newX - oldX == -2 ? 0 : _game->SIZE - 1, newY);
+  }
 }
 
 

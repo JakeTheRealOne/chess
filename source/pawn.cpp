@@ -56,10 +56,6 @@ int Pawn::doubleUpIndex() const noexcept
 
 void Pawn::move(const int x, const int y) noexcept
 {
-  static int tmp = 0;
-  mvprintw(tmp, 0, "THE PAWN IS BEING MOVED");
-  getch();
-  ++ tmp;
   if (abs(_y - y) == 2)
   {
     _doubleUp = _game->index(); //< Register double up index for En passant

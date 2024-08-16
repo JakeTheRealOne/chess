@@ -15,6 +15,7 @@
 
 // #### Internal inclusions: ####
 # include "../header/piece.hpp"
+# include "../header/rook.hpp"
 
 // #### Std inclusions: ####
 # include <iostream>
@@ -90,6 +91,20 @@ public:
    */
   void move(const int x, const int y) noexcept override;
 
+  /**
+   * @brief Check for the short and long castling and add them
+   * to _savedMoves if they are legal
+   * 
+   */
+  void readCastling() noexcept;
+
+  /**
+   * @brief Execute the short/long castling
+   *
+   * @param isShort The flag that indiquates if it kingside or not
+   */
+  void executeCastling(bool isShort) noexcept;
+
   // #### Operator: ####
 
   /**
@@ -105,5 +120,12 @@ private:
   // #### Attributes: ####
   bool _didntMove = true;
 
-
+  /**
+   * @brief Helper of King::readCastling, return if the castling is legal
+   * @note This method does not check: K and R didnt move, K not in check, R exists 
+   *
+   * @param rook The rook involved in the castling
+   * @return bool
+   */
+  bool castlingLegal(Rook* rook) const noexcept;
 };

@@ -173,7 +173,7 @@ int Game::signature64() const noexcept
 }
 
 
-bool Game::move(Piece* piece, const int x, const int y, const bool force) noexcept
+bool Game::move(Piece* piece, const int x, const int y, const bool force)
 {
   // Check the legality of the move:
   vector<int> pos = {x, y};
@@ -194,6 +194,21 @@ bool Game::move(Piece* piece, const int x, const int y, const bool force) noexce
     delete _board[piece->y()][x];
     _board[piece->y()][x] = nullptr;
   }
+  else if (piece->isKing() and abs(x - piece->x()) == 2)
+  {
+    Piece* rook = _board[piece->y()][(x - piece->x() == -2) ? 0 : SIZE - 1];
+    if (rook == nullptr)
+    {
+      throw runtime_error("try to castle but no rook was detected");
+    }
+    int rookTarget = (x - piece->x() == -2) ? x + 1 : x - 1;
+    _board[piece->y()][rookTarget] = rook;
+    _board[rook->y()][rook->x()] = nullptr;
+    rook->move(rookTarget, piece->y());
+
+  }
+
+
   _board[y][x] = piece;
   _board[piece->y()][piece->x()] = nullptr;
   piece->move(x, y);
