@@ -28,9 +28,10 @@ Piece()
 }
 
 
-Pawn::Pawn(const bool player, const int x, const int y, Game* game):
+Pawn::Pawn(const bool player, const int x, const int y, Game* game, int doubleUp):
 Piece(player, x, y, game)
 {
+  _doubleUp = doubleUp;
   _repr = 'P';
 }
 

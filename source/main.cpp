@@ -46,7 +46,7 @@ vector<int> getPos(TUI& tui, bool abortFlag)
 }
 
 
-void run(Game* game, TUI& tui)
+int run(Game* game, TUI& tui)
 {
   bool state = false, isOver = false;
   int x, y;
@@ -54,7 +54,7 @@ void run(Game* game, TUI& tui)
   tui.showMessage(game->turn() ? "Black's turn" : "White's turn");
   while (not isOver)
   {
-    vector<int> pos = getPos(tui, state);
+    vector<int> pos = getPos(tui, true);
     if (state)
     {
       if (not pos.size())
@@ -84,6 +84,11 @@ void run(Game* game, TUI& tui)
     }
     else
     {
+      if (pos.empty())
+      {
+        game->save("memory/saved_games/test");
+        return 1;
+      }
       piece = game->at(pos[0], pos[1]);
       if (piece != nullptr and piece->player() == game->turn())
       {
@@ -94,19 +99,24 @@ void run(Game* game, TUI& tui)
   tui.move(x, y, piece->x(), piece->y());
   game->updateCheckList(piece, x, y);
   ++ *game;
+  return 0;
 }
 
 
 int newGame(TUI& tui, Game* game)
 {
   clear();
-  bool endOfGame = false;
+  bool endOfGame = false, brutalStop = false;
   tui.show();
-  while (not endOfGame)
+  while (not endOfGame and not brutalStop)
   {
-    run(game, tui);
+    brutalStop = run(game, tui);
     endOfGame = game->isMate();
     // mvprintw(0, 0, "N OF CHECK: %d", (int)game->checkList().size()); // DEBUG
+  }
+  if (brutalStop)
+  {
+    return 1;
   }
   if (game->drawBy50Moves())
   {

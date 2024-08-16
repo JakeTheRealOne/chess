@@ -183,6 +183,13 @@ public:
    */
   void filterMoves(Piece* piece, vector<vector<int>>& moves);
 
+  /**
+   * @brief Save the current game into a file
+   * 
+   * @param path The path of the save file
+   */
+  void save(string path);
+
   // #### Operators: ####
 
   /**
@@ -206,7 +213,7 @@ private:
   vector<vector<Piece*>> _board;
   vector<Piece*> _checkList; //< The list of piece checking current player
   bool _turn = 0; //< The player that is gonna play (0: White, 1: Black)
-  King* _whiteKing, * _blackKing;
+  King* _whiteKing = nullptr, * _blackKing = nullptr;
   int _index = 0; //< The index of the current move in the game (from 0 to inf.)
   int _50moveRules = 0; //< The index used in counting the 50 moves rule
 
@@ -319,4 +326,80 @@ private:
    * @return bool
    */
   bool kingNear(Piece* piece);
+
+  /**
+   * @brief Initialize the _turn attribute from a save file
+   * 
+   * @param file The file object
+   */
+  void initTurn(ifstream& file);
+
+  /**
+   * @brief Initialize the _index attribute from a save file
+   * 
+   * @param file The file object
+   */
+  void initIndex(ifstream& file);
+
+  /**
+   * @brief Initialize the _50movesRule attribute from a save file
+   * 
+   * @param file The file object
+   */
+  void init50moves(ifstream& file);
+
+  /**
+   * @brief Initialize the _board attribute from a save file
+   * 
+   * @param file The file object
+   */
+  void initBoard(ifstream& file);
+
+  /**
+   * @brief Initialize the _checkList attribute from a save file
+   * 
+   * @param file The file object
+   */
+  void initCheckList(ifstream& file);
+
+  /**
+   * @brief Check that the attributes are relevant
+   * 
+   */
+  void sanityCheck();
+
+  /**
+   * @brief Write the _turn attribute to a save file
+   * 
+   * @param file The file object
+   */
+  void writeTurn(ofstream& file);
+
+  /**
+   * @brief Write the _index attribute to a save file
+   * 
+   * @param file The file object
+   */
+  void writeIndex(ofstream& file);
+
+  /**
+   * @brief Write the _50movesRule attribute to a save file
+   * 
+   * @param file The file object
+   */
+  void write50moves(ofstream& file);
+
+  /**
+   * @brief Write the _board attribute to a save file
+   * 
+   * @param file The file object
+   */
+  void writeBoard(ofstream& file);
+
+  /**
+   * @brief Write the _checkList attribute to a save file
+   * 
+   * @param file The file object
+   */
+  void writeCheckList(ofstream& file);
 };

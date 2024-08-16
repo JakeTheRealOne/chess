@@ -44,8 +44,9 @@ public:
    * @param x The X pos of the chess piece
    * @param y The Y pos of the chess piece
    * @param game The game where the chess piece is located
+   * @param doubleUp The index of the double up of the pawn
    */
-  Pawn(const bool player, const int x, const int y, Game* game);
+  Pawn(const bool player, const int x, const int y, Game* game, int doubleUp = -1);
 
   // #### Flags: ####
 

@@ -28,6 +28,7 @@
 # include <vector>
 # include <iostream>
 # include <algorithm>
+# include <fstream>
 using namespace std;
 
 
@@ -68,13 +69,6 @@ Game::Game()
   _blackKing = new King(1, 4, 0, this);
   _board[7][4] = _whiteKing;
   _board[0][4] = _blackKing;
-
-  // debug:
-  /*_whiteKing = new King(0, 5, 4, this);
-  _board[4][5] = _whiteKing;
-  _board[4][3] = new Knight(0, 3, 4, this);
-  _board[4][1] = new Rook(1, 1, 4, this);*/
-
 }
 
 
@@ -84,7 +78,24 @@ Game::Game(string path)
   {
     _board.push_back(vector<Piece*>(SIZE, nullptr));
   }
-  // Get
+  ifstream file(path);
+  if (!file)
+  {
+    throw runtime_error("wrong path for save file");
+  }
+  file.seekg(9, ios::cur); //< skip the signature CHESSJKLV
+  // Get _index
+  initIndex(file);
+  // Get _turn
+  initTurn(file);
+  // Get _50movesrule
+  init50moves(file);
+  // Get _board
+  initBoard(file);
+  // Get _checkList
+  initCheckList(file);
+  // Sanity check: kings must exist
+  sanityCheck();
 }
 
 
@@ -743,4 +754,201 @@ bool Game::kingNear(Piece* piece)
   Piece* otherKing = king(not piece->player());
   int diffX = abs(otherKing->x() - piece->x()), diffY = abs(otherKing->y() - piece->y());
   return (diffX < 2 and diffY < 2 and (diffX or diffY));
+}
+
+
+void Game::initTurn(ifstream& file)
+{
+  if (file.eof())
+  {
+    throw runtime_error("corrupted file (ERR_CODE: 1)");
+  }
+  char turn;
+  file.read(&turn, sizeof(turn));
+  _turn = turn;
+}
+
+
+void Game::initIndex(ifstream& file)
+{
+  if (file.eof())
+  {
+    throw runtime_error("corrupted file (ERR_CODE: 2)");
+  }
+  char index;
+  file.read(&index, sizeof(index));
+  _index = index;
+}
+
+
+void Game::init50moves(ifstream& file)
+{
+  if (file.eof())
+  {
+    throw runtime_error("corrupted file (ERR_CODE: 2)");
+  }
+  char fiftyMovesRule;
+  file.read(&fiftyMovesRule, sizeof(fiftyMovesRule));
+  _50moveRules = fiftyMovesRule;
+}
+
+
+void Game::initBoard(ifstream& file)
+{
+  for (int y = 0; y < SIZE; ++ y)
+  {
+    for (int x = 0; x < SIZE; ++ x)
+    {
+      if (file.eof())
+      {
+        throw runtime_error("corrupted file (ERR_CODE: 3)");
+      }
+      char pieceType, pieceOwner, doubleUp;
+      file.read(&pieceType, sizeof(pieceType));
+      file.read(&pieceOwner, sizeof(pieceOwner));
+      switch (pieceType)
+      {
+        case 0:
+          continue;
+        case 'P':
+          file.read(&doubleUp, sizeof(doubleUp));
+          _board[y][x] = new Pawn(pieceOwner, x, y, this, doubleUp);
+          break;
+        case 'R':
+          _board[y][x] = new Rook(pieceOwner, x, y, this);
+          break;
+        case 'N':
+          _board[y][x] = new Knight(pieceOwner, x, y, this);
+          break;
+        case 'B':
+          _board[y][x] = new Bishop(pieceOwner, x, y, this);
+          break;
+        case 'Q':
+          _board[y][x] = new Queen(pieceOwner, x, y, this);
+          break;
+        case 'K':
+          if ((pieceOwner ? _blackKing : _whiteKing) != nullptr)
+          {
+            throw runtime_error("corrupted file (ERR_CODE: 5)");
+          }
+          (pieceOwner ? _blackKing : _whiteKing) = new King(pieceOwner, x, y, this);
+          _board[y][x] = (pieceOwner ? _blackKing : _whiteKing);
+          break;
+        default:
+          throw runtime_error("corrupted file (ERR_CODE: 4)");
+      }
+    }
+  }
+}
+
+
+void Game::initCheckList(ifstream& file)
+{
+  if (file.eof())
+  {
+    throw runtime_error("corrupted file (ERR_CODE: 6)");
+  }
+  char size, x, y;
+  file.read(&size, sizeof(size));
+  for (int index = 0; index < size; ++ index)
+  {
+    file.read(&x, sizeof(x));
+    file.read(&y, sizeof(y));
+    if (y >= SIZE or x >= SIZE or y < 0 or x < 0 or _board[y][x] == nullptr)
+    {
+      throw runtime_error("corrupted file (ERR_CODE: 7)");
+    }
+    _checkList.push_back(_board[y][x]);
+  }
+}
+
+
+void Game::sanityCheck()
+{
+  if (_whiteKing == nullptr or _blackKing == nullptr)
+  {
+    throw runtime_error("corrupted file (ERR_CODE: 8)");
+  }
+}
+
+
+void Game::save(string path)
+{
+  static char signature[] = {'C', 'H', 'E', 'S', 'S', 'J', 'K', 'L', 'V'};
+  ofstream file(path);
+  if (!file)
+  {
+    throw runtime_error("cannot write save file");
+  }
+  file.write(signature, sizeof(signature));
+  writeIndex(file);
+  writeTurn(file);
+  write50moves(file);
+  writeBoard(file);
+  writeCheckList(file);
+}
+
+
+void Game::writeTurn(ofstream& file)
+{
+  char turn = _turn;
+  file.write(&turn, sizeof(turn));
+}
+
+
+void Game::writeIndex(ofstream& file)
+{
+  char index = _index;
+  file.write(&index, sizeof(index));
+}
+
+
+void Game::write50moves(ofstream& file)
+{
+  char fiftyMovesRule = _50moveRules;
+  file.write(&fiftyMovesRule, sizeof(fiftyMovesRule));
+}
+
+
+void Game::writeBoard(ofstream& file)
+{
+  Piece* piece;
+  char pieceType, pieceOwner, doubleUp;
+  for (int y = 0; y < SIZE; ++ y)
+  {
+    for (int x = 0; x < SIZE; ++ x)
+    {
+      piece = _board[y][x];
+      if (piece == nullptr)
+      {
+        pieceType = 0;
+        pieceOwner = 0;
+      }
+      else
+      {
+        pieceType = piece->repr();
+        pieceOwner = piece->player();
+      }
+      file.write(&pieceType, sizeof(pieceType));
+      file.write(&pieceOwner, sizeof(pieceOwner));
+      if (piece != nullptr and piece->isPawn())
+      {
+        doubleUp = ((Pawn*)piece)->doubleUpIndex();
+        file.write(&doubleUp, sizeof(doubleUp));
+      }
+    }
+  }
+}
+
+
+void Game::writeCheckList(ofstream& file)
+{
+  char size = _checkList.size(), x, y;
+  file.write(&size, sizeof(size));
+  for (int index = 0; index < size; ++ index)
+  {
+    x = _checkList[index]->x(), y = _checkList[index]->y();
+    file.write(&x, sizeof(x));
+    file.write(&y, sizeof(y));
+  }
 }
