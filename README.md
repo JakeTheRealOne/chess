@@ -10,7 +10,7 @@
 ## Controls
 | Key | Action |
 |----------|----------|
-| 
+|
 | <kbd>Enter</kbd>   | Confirm selection |
 | <kbd>Escape</kbd> <kbd>q</kbd> | Abort/Leave menu |
 | <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> <br> <kbd>k</kbd> <kbd>j</kbd> <kbd>h</kbd> <kbd>l</kbd> | Change the cursor position |
